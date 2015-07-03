@@ -25,32 +25,39 @@ public class LinearRegression {
     //Matrix of standard deviations of each feature
     private Matrix sigma;
     
-    public LinearRegression(Matrix x, Matrix y, Matrix t){
+    public LinearRegression(Matrix x, Matrix y){
         this.X = x;
         this.y = y;
-        this.Theta = t;
         this.m = x.getRowDimension();
         this.n = x.getColumnDimension();
+        this.Theta = JAMAExtensions.Zeros(n, 1);
     }
     
     //add column of ones to X
     public void addBias(){
         X = JAMAExtensions.concat(JAMAExtensions.Ones(m, 1), X, 1);
+        n++;
+        Theta = JAMAExtensions.Zeros(n, 1);
     }
     
     //(1/2m)*(sum((X*Theta-y)^2))
     public double costFunction(){
         Matrix temp = (X.times(Theta)).minus(y);
         //Should be 1*1 matrix
-        double squaredSum = (temp.transpose().times(temp)).get(0, 0);
-        return squaredSum/(2*m);
+        Matrix squaredSum = ((temp.transpose()).times(temp));
+        return squaredSum.get(0,0)/(2*m);
     }
     
-    
-    public Matrix featureNoramlize(){
+    //Normalize features
+    public Matrix featureNoramlize(boolean set){
         mu = JAMAExtensions.mean(X, 2);
         sigma = JAMAExtensions.std(X, 2);
-        return (X.minus(JAMAExtensions.Ones(m, 1).times(mu))).arrayRightDivide(JAMAExtensions.Ones(m, 1).times(sigma));
+        Matrix muTemp = JAMAExtensions.Ones(m, 1).times(mu);
+        Matrix sigTemp = JAMAExtensions.Ones(m, 1).times(sigma);
+        Matrix ret = (X.minus(muTemp)).arrayRightDivide(sigTemp);
+        if(set)
+            X = ret;
+        return ret;
     }
 
     public Matrix gradientDescent(int iterations, double alpha){
@@ -66,5 +73,13 @@ public class LinearRegression {
     public void normalEquation(){
         Matrix temp = X.transpose();
         Theta = (((temp.times(X)).inverse()).times(temp)).times(y);
+    }
+    
+    public double predict(Matrix a){
+        return a.times(Theta).get(0, 0);
+    }
+    
+    public Matrix getTheta(){
+        return Theta;
     }
 }

@@ -26,5 +26,18 @@ public class Readfile {
         }
         return ret;
     }
+    
+    public static double[][] getFileArray(String fileName) throws IOException{
+        String[] out = fileLines(fileName);
+        String[] temp = out[0].split(",");
+        double[][] ret = new double[out.length][temp.length];
+        for(int r = 0; r < ret.length; r++){
+            String[] outSplit = out[r].split(",");
+            for(int c = 0; c < ret[0].length; c++){
+                ret[r][c] = Double.parseDouble(outSplit[c]);
+            }
+        }
+        return ret;
+    }
 
 }

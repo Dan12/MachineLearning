@@ -57,7 +57,7 @@ public class JAMAExtensions {
         if(dim == 1){
             Matrix ret = new Matrix(a.getRowDimension(),1);
             for(int r = 0; r < a.getRowDimension(); r++){
-                int sum = 0;
+                double sum = 0;
                 for(int c = 0; c < a.getColumnDimension(); c++){
                     sum+=a.get(r, c);
                 }
@@ -68,7 +68,7 @@ public class JAMAExtensions {
         else{
             Matrix ret = new Matrix(1,a.getColumnDimension());
             for(int c = 0; c < a.getColumnDimension(); c++){
-                int sum = 0;
+                double sum = 0;
                 for(int r = 0; r < a.getRowDimension(); r++){
                     sum+=a.get(r, c);
                 }
@@ -193,7 +193,7 @@ public class JAMAExtensions {
         String ret = "";
         for(int r = 0; r < a.getRowDimension(); r++){
             for(int c = 0; c < a.getColumnDimension(); c++){
-                ret+="  "+String.format("% 6f", a.getArray()[r][c]);
+                ret+="  "+String.format("% 6.6f", a.getArray()[r][c]);
             }
             ret+="\n";
         }

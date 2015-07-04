@@ -2,9 +2,10 @@ package com.mycompany.maventest;
 
 import com.mycompany.JAMA.Matrix;
 
-public class JAMAExtensions {
+//Jama extensions
+public class JAMAExt {
 
-    public JAMAExtensions(){}
+    public JAMAExt(){}
     
     public static Matrix Ones(int m, int n){
         return new Matrix(m, n, 1);
@@ -78,8 +79,25 @@ public class JAMAExtensions {
         }
     }
     
-    //Extends subtraction even if matricies do not have same dimensions
+    public static Matrix plusExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 0);
+    }
+    
     public static Matrix minusExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 1);
+    }
+    
+    public static Matrix timesExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 2);
+    }
+    
+    public static Matrix divideExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 3);
+    }
+    
+    //Extends operations even if matricies do not have same dimensions
+    //0-add, 1-right sub, 2-mult, 3-right div
+    private static Matrix opExtend(Matrix a, Matrix b, int op){
         if(a.getColumnDimension() == b.getColumnDimension() && a.getRowDimension() == b.getRowDimension())
             return a.minus(b);
         else if(a.getColumnDimension() == b.getColumnDimension()){
@@ -87,7 +105,20 @@ public class JAMAExtensions {
                 Matrix ret = new Matrix(b.getRowDimension(),b.getColumnDimension());
                 for(int r = 0; r < b.getRowDimension(); r++){
                     for(int c = 0; c < a.getColumnDimension(); c++){
-                        ret.getArray()[r][c] = a.get(0, c)-b.get(r,c);
+                        switch(op){
+                            case 0:
+                                ret.getArray()[r][c] = a.get(0, c)+b.get(r,c);
+                                break;
+                            case 1:
+                                ret.getArray()[r][c] = a.get(0, c)-b.get(r,c);
+                                break;
+                            case 2:
+                                ret.getArray()[r][c] = a.get(0, c)*b.get(r,c);
+                                break;
+                            case 3:
+                                ret.getArray()[r][c] = a.get(0, c)/b.get(r,c);
+                                break;
+                        }
                     }
                 }
                 return ret;
@@ -96,7 +127,20 @@ public class JAMAExtensions {
                 Matrix ret = new Matrix(a.getRowDimension(),a.getColumnDimension());
                 for(int r = 0; r < a.getRowDimension(); r++){
                     for(int c = 0; c < a.getColumnDimension(); c++){
-                        ret.getArray()[r][c] = a.get(r, c)-b.get(0,c);
+                        switch(op){
+                            case 0:
+                                ret.getArray()[r][c] = a.get(r, c)+b.get(0,c);
+                                break;
+                            case 1:
+                                ret.getArray()[r][c] = a.get(r, c)-b.get(0,c);
+                                break;
+                            case 2:
+                                ret.getArray()[r][c] = a.get(r, c)*b.get(0,c);
+                                break;
+                            case 3:
+                                ret.getArray()[r][c] = a.get(r, c)/b.get(0,c);
+                                break;
+                        }
                     }
                 }
                 return ret;
@@ -110,7 +154,20 @@ public class JAMAExtensions {
                 Matrix ret = new Matrix(b.getRowDimension(),b.getColumnDimension());
                 for(int r = 0; r < a.getRowDimension(); r++){
                     for(int c = 0; c < b.getColumnDimension(); c++){
-                        ret.getArray()[r][c] = a.get(r, 0)-b.get(r,c);
+                        switch(op){
+                            case 0:
+                                ret.getArray()[r][c] = a.get(r, 0)+b.get(r,c);
+                                break;
+                            case 1:
+                                ret.getArray()[r][c] = a.get(r, 0)-b.get(r,c);
+                                break;
+                            case 2:
+                                ret.getArray()[r][c] = a.get(r, 0)*b.get(r,c);
+                                break;
+                            case 3:
+                                ret.getArray()[r][c] = a.get(r, 0)/b.get(r,c);
+                                break;
+                        }
                     }
                 }
                 return ret;
@@ -119,7 +176,20 @@ public class JAMAExtensions {
                 Matrix ret = new Matrix(a.getRowDimension(),a.getColumnDimension());
                 for(int r = 0; r < a.getRowDimension(); r++){
                     for(int c = 0; c < a.getColumnDimension(); c++){
-                        ret.getArray()[r][c] = a.get(r, c)-b.get(r,0);
+                        switch(op){
+                            case 0:
+                                ret.getArray()[r][c] = a.get(r, c)+b.get(r,0);
+                                break;
+                            case 1:
+                                ret.getArray()[r][c] = a.get(r, c)-b.get(r,0);
+                                break;
+                            case 2:
+                                ret.getArray()[r][c] = a.get(r, c)*b.get(r,0);
+                                break;
+                            case 3:
+                                ret.getArray()[r][c] = a.get(r, c)/b.get(r,0);
+                                break;
+                        }
                     }
                 }
                 return ret;
@@ -132,7 +202,20 @@ public class JAMAExtensions {
             Matrix ret = new Matrix(b.getRowDimension(),b.getColumnDimension());
             for(int r = 0; r < b.getRowDimension(); r++){
                 for(int c = 0; c < b.getColumnDimension(); c++){
-                    ret.getArray()[r][c] = a.get(0, 0)-b.get(r,c);
+                    switch(op){
+                        case 0:
+                            ret.getArray()[r][c] = a.get(0, 0)+b.get(r,c);
+                            break;
+                        case 1:
+                            ret.getArray()[r][c] = a.get(0, 0)-b.get(r,c);
+                            break;
+                        case 2:
+                            ret.getArray()[r][c] = a.get(0, 0)*b.get(r,c);
+                            break;
+                        case 3:
+                            ret.getArray()[r][c] = a.get(0, 0)/b.get(r,c);
+                            break;
+                    }
                 }
             }
             return ret;
@@ -141,7 +224,20 @@ public class JAMAExtensions {
             Matrix ret = new Matrix(a.getRowDimension(),a.getColumnDimension());
             for(int r = 0; r < a.getRowDimension(); r++){
                 for(int c = 0; c < a.getColumnDimension(); c++){
-                    ret.getArray()[r][c] = a.get(r, c)-b.get(0,0);
+                    switch(op){
+                        case 0:
+                            ret.getArray()[r][c] = a.get(r, c)+b.get(0,0);
+                            break;
+                        case 1:
+                            ret.getArray()[r][c] = a.get(r, c)-b.get(0,0);
+                            break;
+                        case 2:
+                            ret.getArray()[r][c] = a.get(r, c)*b.get(0,0);
+                            break;
+                        case 3:
+                            ret.getArray()[r][c] = a.get(r, c)/b.get(0,0);
+                            break;
+                    }
                 }
             }
             return ret;

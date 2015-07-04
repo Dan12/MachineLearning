@@ -30,14 +30,14 @@ public class LinearRegression {
         this.y = y;
         this.m = x.getRowDimension();
         this.n = x.getColumnDimension();
-        this.Theta = JAMAExtensions.Zeros(n, 1);
+        this.Theta = JAMAExt.Zeros(n, 1);
     }
     
     //add column of ones to X
     public void addBias(){
-        X = JAMAExtensions.concat(JAMAExtensions.Ones(m, 1), X, 1);
+        X = JAMAExt.concat(JAMAExt.Ones(m, 1), X, 1);
         n++;
-        Theta = JAMAExtensions.Zeros(n, 1);
+        Theta = JAMAExt.Zeros(n, 1);
     }
     
     //(1/2m)*(sum((X*Theta-y)^2))
@@ -50,10 +50,10 @@ public class LinearRegression {
     
     //Normalize features
     public Matrix featureNoramlize(boolean set){
-        mu = JAMAExtensions.mean(X, 2);
-        sigma = JAMAExtensions.std(X, 2);
-        Matrix muTemp = JAMAExtensions.Ones(m, 1).times(mu);
-        Matrix sigTemp = JAMAExtensions.Ones(m, 1).times(sigma);
+        mu = JAMAExt.mean(X, 2);
+        sigma = JAMAExt.std(X, 2);
+        Matrix muTemp = JAMAExt.Ones(m, 1).times(mu);
+        Matrix sigTemp = JAMAExt.Ones(m, 1).times(sigma);
         Matrix ret = (X.minus(muTemp)).arrayRightDivide(sigTemp);
         if(set)
             X = ret;

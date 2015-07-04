@@ -1,10 +1,10 @@
 package com.mycompany.maventest;
 
-import no.uib.cipr.matrix.Matrix;
+import no.uib.cipr.matrix.*;
 
-public class MTJFunctions {
+public class MTJFunc {
 
-    public MTJFunctions(){}
+    public MTJFunc(){}
     
     public static double[][] getMatrixArray(Matrix a){
         double[][] ret = new double[a.numRows()][a.numColumns()];

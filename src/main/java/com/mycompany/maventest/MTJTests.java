@@ -56,6 +56,32 @@ public class MTJTests {
         //Passed
         System.out.println(MTJExt.minusExtend(new DenseMatrix(new double[][]{{4,3},{3,1}}), matB));
         System.out.println(matB);
+        //Passed
+        System.out.println(matB.mult(matA, new DenseMatrix(matB.numRows(),matA.numColumns())));
+        System.out.println(matC);
+        //Passed
+        System.out.println((new DenseMatrix(new double[][]{{5,2}})).transpose(new DenseMatrix(2,1)));
+        
+        double[][] data = null;
+        try {
+            data = Readfile.getFileArray("data1.txt");
+        } catch (IOException e) {System.out.println(e);}
+        
+        //Passed
+        LinearRegression lg = new LinearRegression(new DenseMatrix(GenFunc.splitMatrix(data, 0, -1, 0, 1)), new DenseMatrix(GenFunc.splitMatrix(data, 0, -1, 2, 2)));
+        //Passed
+        lg.featureNoramlize();
+        lg.addBias();
+        System.out.println(lg.getX());
+        //Passed
+        System.out.println(lg.costFunction());
+        //Passed
+//        lg.normalEquation();
+//        System.out.println(lg.costFunction()+"  ,  "+lg.getTheta());
+        //Passed
+        lg.gradientDescent(400, 0.01);
+        System.out.println(lg.getTheta());
+        //All Linear Regression Tests Passed
     }
 
 }

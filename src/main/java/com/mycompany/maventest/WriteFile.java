@@ -23,7 +23,7 @@ public class WriteFile {
     
     public static void writeMatrix(String name, Matrix mat) throws IOException{
         String data = "";
-        String matrix = mat.toString();
+        String matrix = GenFunc.matrixToString(mat);
         String[] temp = matrix.split("\n");
         for(String s : temp)
             data += (s.trim()).replace("  ", ", ")+"\n";

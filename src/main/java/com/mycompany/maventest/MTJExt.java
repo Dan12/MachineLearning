@@ -3,6 +3,7 @@ package com.mycompany.maventest;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
+//MTJ extensions
 public class MTJExt {
 
     public MTJExt(){}
@@ -24,14 +25,14 @@ public class MTJExt {
     //compute mean along specified dimension (1-rows, get row vector; 2-cols, get column vector)
     public static Matrix mean(Matrix a, int dim){
         if(dim == 1){
-            double[][] retArr = MTJFunc.getMatrixArray(sum(a, 1));
+            double[][] retArr = GenFunc.getMatrixArray(sum(a, 1));
             for(int r = 0; r < a.numRows(); r++){
                 retArr[r][0] = retArr[r][0]/a.numColumns();
             }
             return new DenseMatrix(retArr);
         }
         else{
-            double[][] retArr = MTJFunc.getMatrixArray(sum(a, 2));
+            double[][] retArr = GenFunc.getMatrixArray(sum(a, 2));
             for(int c = 0; c < a.numColumns(); c++){
                 retArr[0][c] = retArr[0][c]/a.numRows();
             }

@@ -1,8 +1,8 @@
-package com.mycompany.maventest;
+package com.mycompany.JAMA.util;
 
 import com.mycompany.JAMA.Matrix;
 
-//Jama extensions
+//Jama extensions, a few bugs
 public class JAMAExt {
 
     public JAMAExt(){}

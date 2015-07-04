@@ -1,6 +1,8 @@
 package com.mycompany.maventest;
 
-import com.mycompany.JAMA.Matrix;
+import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
+import no.uib.cipr.matrix.Matrix;
 
 public class LinearRegression {
 
@@ -28,58 +30,78 @@ public class LinearRegression {
     public LinearRegression(Matrix x, Matrix y){
         this.X = x;
         this.y = y;
-        this.m = x.getRowDimension();
-        this.n = x.getColumnDimension();
-        this.Theta = JAMAExt.Zeros(n, 1);
+        this.m = x.numRows();
+        this.n = x.numColumns();
+        this.Theta = MTJExt.Zeros(n, 1);
     }
     
     //add column of ones to X
     public void addBias(){
-        X = JAMAExt.concat(JAMAExt.Ones(m, 1), X, 1);
+        X = MTJExt.concat(MTJExt.Ones(m, 1), X, 1);
         n++;
-        Theta = JAMAExt.Zeros(n, 1);
+        Theta = MTJExt.Zeros(n, 1);
     }
     
     //(1/2m)*(sum((X*Theta-y)^2))
     public double costFunction(){
-        Matrix temp = (X.times(Theta)).minus(y);
+        Matrix temp = MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)), y);
         //Should be 1*1 matrix
-        Matrix squaredSum = ((temp.transpose()).times(temp));
+        Matrix squaredSum = (temp.transpose(new DenseMatrix(1,m))).mult(temp, new DenseMatrix(1,1));
         return squaredSum.get(0,0)/(2*m);
     }
     
     //Normalize features
-    public Matrix featureNoramlize(boolean set){
-        mu = JAMAExt.mean(X, 2);
-        sigma = JAMAExt.std(X, 2);
-        Matrix muTemp = JAMAExt.Ones(m, 1).times(mu);
-        Matrix sigTemp = JAMAExt.Ones(m, 1).times(sigma);
-        Matrix ret = (X.minus(muTemp)).arrayRightDivide(sigTemp);
-        if(set)
-            X = ret;
-        return ret;
+    public void featureNoramlize(){
+        mu = MTJExt.mean(X, 2);
+        sigma = MTJExt.std(X, 2);
+        X = GenFunc.featureNormalize(X, mu, sigma);
     }
 
     public Matrix gradientDescent(int iterations, double alpha){
-        Matrix costHist = new Matrix(iterations,1);
+        double[][] costHist = new double[iterations][1];
         for(int i = 0; i < iterations; i++){
-            Matrix temp = (X.transpose()).times((X.times(Theta)).minus(y));
-            Theta = Theta.minus(temp.times(alpha/m));
-            costHist.getArray()[i][0] = costFunction();
+            Matrix temp = (X.transpose(new DenseMatrix(n,m))).mult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)),y), new DenseMatrix(n,1));
+            Theta = MTJExt.minusExtend(Theta,temp.scale(alpha/m));
+            costHist[i][0] = costFunction();
         }
-        return costHist;
+        return new DenseMatrix(costHist);
     }
     
     public void normalEquation(){
-        Matrix temp = X.transpose();
-        Theta = (((temp.times(X)).inverse()).times(temp)).times(y);
+        Matrix temp = X.transpose(new DenseMatrix(n,m));
+        Theta = (((temp.mult(X, new DenseMatrix(n,n))).solve(Matrices.identity(n), new DenseMatrix(n,n))).mult(temp, new DenseMatrix(n,m))).mult(y, new DenseMatrix(n,1));
     }
     
     public double predict(Matrix a){
-        return a.times(Theta).get(0, 0);
+        return a.mult(Theta,new DenseMatrix(1,1)).get(0, 0);
     }
     
     public Matrix getTheta(){
         return Theta;
     }
+    
+    public Matrix getX(){
+        return X;
+    }
+    
+    public Matrix getY(){
+        return y;
+    }
+    
+    public Matrix getMu(){
+        return mu;
+    }
+    
+    public Matrix getSigma(){
+        return sigma;
+    }
+    
+    public int getM(){
+        return m;
+    }
+    
+    public int getN(){
+        return n;
+    }
+    
 }

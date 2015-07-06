@@ -1,7 +1,6 @@
 package com.mycompany.maventest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
@@ -110,8 +109,6 @@ public class MTJTests {
         System.out.println(lr.gradientDescent(20, 0.002, true));
         System.out.println(lr.getTheta());
         //All logistic regression tests passed, not happy with gradient descent
-        System.out.println(lr.getX());
-        System.out.println(lr.getY());
         //Passed
         CostGradient lrCostGrad = new CostGradient(lr.getX(), lr.getY(), 0){
             
@@ -125,7 +122,6 @@ public class MTJTests {
             
             @Override
             public Matrix Gradient(Matrix Theta){
-                System.out.println("Hey");
                 Matrix temp = (X.transpose(new DenseMatrix(n,m))).mult(MTJExt.minusExtend(GenFunc.sigmoidEx(X.mult(Theta, new DenseMatrix(m,1))),y), new DenseMatrix(n,1));
                 Matrix thetaMult = MTJExt.concat(MTJExt.single(0),MTJExt.Const(n-1, 1, lambda/m), 2);
                 return (temp.scale((double)1/m)).add(MTJExt.timesExtend(Theta, thetaMult));
@@ -140,6 +136,13 @@ public class MTJTests {
         System.out.println(GenFunc.matrixToString(mincg.getGradient(new DenseMatrix(new double[][]{{20},{-0.2},{-0.2}}))));
     
         Fmincg.FmincgRet temp = mincg.runRoutine(MTJExt.Zeros(lrCostGrad.n, 1), 10);
+        
+        double tempA = Double.NaN;
+        System.out.println(Double.isNaN(tempA));
+        tempA = Double.POSITIVE_INFINITY;
+        System.out.println(Double.isInfinite(tempA));
+        tempA = Math.sqrt(-1);
+        System.out.println(tempA);
     }
 
 }

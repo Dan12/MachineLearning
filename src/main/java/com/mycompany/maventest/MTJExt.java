@@ -159,13 +159,13 @@ public class MTJExt {
     //0-add, 1-right sub, 2-mult, 3-right div, 4-pow, 5-log
     private static Matrix opExtend(Matrix a, Matrix b, int op){
         if(a.numColumns()== b.numColumns() && a.numRows()== b.numRows()){
-            DenseMatrix result = new DenseMatrix(a.numRows(), a.numColumns());
+            DenseMatrix result = new DenseMatrix(a, true);
             if(op == 0)
-                result = new DenseMatrix(a.add(b));
+                result.add(b);
             else if(op == 1){
-                result = new DenseMatrix(b, true);
-                result.scale(-1);
-                result = new DenseMatrix(a.add(result));
+                Matrix invB = new DenseMatrix(b, true);
+                invB.scale(-1);
+                result.add(invB);
             }
             else{
                 result = null;
@@ -178,8 +178,9 @@ public class MTJExt {
                             retArr[r][c] = a.get(r, c)/b.get(r, c);
                         else if(op == 4)
                             retArr[r][c] = Math.pow(a.get(r, c),b.get(r, c));
-                        else if(op == 5)
+                        else if(op == 5){
                             retArr[r][c] = Math.log(a.get(r, c));
+                        }
                     }
                 }
                 result = new DenseMatrix(retArr);

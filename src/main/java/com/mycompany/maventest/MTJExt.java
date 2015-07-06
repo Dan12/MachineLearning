@@ -18,8 +18,22 @@ public class MTJExt {
         return new DenseMatrix(temp);
     }
     
+    public static Matrix Const(int m, int n, double con){
+        double[][] temp = new double[m][n];
+        for(int r = 0; r < m; r++){
+            for(int c = 0; c < n; c++){
+                temp[r][c] = con;
+            }
+        }
+        return new DenseMatrix(temp);
+    }
+    
     public static Matrix Zeros(int m, int n){
         return new DenseMatrix(new double[m][n]);
+    }
+    
+    public static Matrix single(double d){
+        return new DenseMatrix(new double[][]{{d}});
     }
     
     //compute mean along specified dimension (1-rows, get row vector; 2-cols, get column vector)
@@ -99,6 +113,10 @@ public class MTJExt {
         return opExtend(a,b,4);
     }
     
+    public static Matrix logExtend(Matrix a){
+        return opExtend(a, a, 5);
+    }
+    
     //concat along dim (1-rows, 2-cols)
     public static Matrix concat(Matrix a, Matrix b, int dim){
         if(dim == 1){
@@ -138,7 +156,7 @@ public class MTJExt {
     }
     
     //Extends element-wise operations even if matricies do not have same dimensions
-    //0-add, 1-right sub, 2-mult, 3-right div, 4-pow
+    //0-add, 1-right sub, 2-mult, 3-right div, 4-pow, 5-log
     private static Matrix opExtend(Matrix a, Matrix b, int op){
         if(a.numColumns()== b.numColumns() && a.numRows()== b.numRows()){
             DenseMatrix result = new DenseMatrix(a.numRows(), a.numColumns());
@@ -160,6 +178,8 @@ public class MTJExt {
                             retArr[r][c] = a.get(r, c)/b.get(r, c);
                         else if(op == 4)
                             retArr[r][c] = Math.pow(a.get(r, c),b.get(r, c));
+                        else if(op == 5)
+                            retArr[r][c] = Math.log(a.get(r, c));
                     }
                 }
                 result = new DenseMatrix(retArr);

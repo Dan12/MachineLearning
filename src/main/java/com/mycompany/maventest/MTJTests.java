@@ -68,7 +68,7 @@ public class MTJTests {
         } catch (IOException e) {System.out.println(e);}
         
         //Passed
-        LinearRegression lg = new LinearRegression(new DenseMatrix(GenFunc.splitMatrix(data, 0, -1, 0, 1)), new DenseMatrix(GenFunc.splitMatrix(data, 0, -1, 2, 2)));
+        LinearRegression lg = new LinearRegression(new DenseMatrix(GenFunc.splitDouble(data, 0, -1, 0, 1)), new DenseMatrix(GenFunc.splitDouble(data, 0, -1, 2, 2)));
         //Passed
         lg.featureNoramlize();
         lg.addBias();
@@ -79,9 +79,35 @@ public class MTJTests {
 //        lg.normalEquation();
 //        System.out.println(lg.costFunction()+"  ,  "+lg.getTheta());
         //Passed
-        lg.gradientDescent(400, 0.01);
+        lg.gradientDescent(400, 0.01, false);
         System.out.println(lg.getTheta());
         //All Linear Regression Tests Passed
+        
+        try {
+            data = Readfile.getFileArray("logrdata1.txt");
+        } catch (IOException e) {System.out.println(e);}
+        LogisticRegression lr = new LogisticRegression(new DenseMatrix(GenFunc.splitDouble(data, 0, -1, 0, 1)), new DenseMatrix(GenFunc.splitDouble(data, 0, -1, 2, 2)));
+        
+        //Passed
+        System.out.println(matC);
+        System.out.println(matC.scale(-1));
+        
+        System.out.println((double)1/50);
+        //Passed
+        System.out.println(LogisticRegression.sigmoid(new DenseMatrix(new double[][]{{0,1,2,3},{-1,-2,-3,-4}})));
+        //Passed
+        System.out.println(MTJExt.logExtend(new DenseMatrix(new double[][]{{0,1,2,3},{-1,-2,-3,-4}})));
+        //Passed
+        lr.addBias();
+        //Passed    
+        lr.setLambda(5);
+        //Passed
+        System.out.println(lr.costFunction());
+        //Passed
+        System.out.println(lr.gradients(1));
+        //Passed (I guess)
+        System.out.println(lr.gradientDescent(20, 0.002, true));
+        System.out.println(lr.getTheta());
     }
 
 }

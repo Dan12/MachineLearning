@@ -57,12 +57,13 @@ public class LinearRegression {
         X = GenFunc.featureNormalize(X, mu, sigma);
     }
 
-    public Matrix gradientDescent(int iterations, double alpha){
+    public Matrix gradientDescent(int iterations, double alpha, boolean rec){
         double[][] costHist = new double[iterations][1];
         for(int i = 0; i < iterations; i++){
             Matrix temp = (X.transpose(new DenseMatrix(n,m))).mult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)),y), new DenseMatrix(n,1));
             Theta = MTJExt.minusExtend(Theta,temp.scale(alpha/m));
-            costHist[i][0] = costFunction();
+            if(rec)
+                costHist[i][0] = costFunction();
         }
         return new DenseMatrix(costHist);
     }

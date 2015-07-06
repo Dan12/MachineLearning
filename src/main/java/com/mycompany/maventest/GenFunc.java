@@ -1,5 +1,6 @@
 package com.mycompany.maventest;
 
+import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
 //General Functions
@@ -11,7 +12,7 @@ public class GenFunc {
         return MTJExt.divideExtend(MTJExt.minusExtend(a,mu), sig);
     }
     
-    public static double[][] splitMatrix(double[][] d, int rs, int rf, int cs, int cf){
+    public static double[][] splitDouble(double[][] d, int rs, int rf, int cs, int cf){
         if(rf == -1)
             rf = d.length-1;
         if(cf == -1)
@@ -27,6 +28,10 @@ public class GenFunc {
             curR++;
         }
         return ret;
+    }
+    
+    public static Matrix splitMatrix(Matrix a, int rs, int rf, int cs, int cf){
+        return new DenseMatrix(splitDouble(getMatrixArray(a), rs, rf, cs, cf));
     }
     
     public static double[][] getMatrixArray(Matrix a){

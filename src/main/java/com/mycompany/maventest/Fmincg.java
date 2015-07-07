@@ -172,7 +172,7 @@ public class Fmincg {
                     s = new DenseMatrix(df1,true).scale(-1);    //otherwise use steepest direction
                     d2 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);
                 }
-                z1 = z1 * Math.min(RATIO, d1/(d2-0)); //slope ratio but max RATIO
+                z1 = z1 * Math.min(RATIO, d1/(d2-0)); //slope ratio but max RATIO, 0 supposed to be realmin(2.2251e-308 for double precision and 1.1755e-38 for single precision)
                 d1 = d2;
                 ls_failed = false;  //this line search did not fail
             }

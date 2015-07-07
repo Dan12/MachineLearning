@@ -136,9 +136,9 @@ public class MTJTests {
         System.out.println(GenFunc.matrixToString(mincg.getGradient(new DenseMatrix(new double[][]{{-21.53},{0.18},{0.17}}))));
         //Passed
         Fmincg.FmincgRet temp = mincg.runRoutine(MTJExt.Zeros(lrCostGrad.n, 1), 20);
-        System.out.println(temp.getX());    //Theta
-        System.out.println(temp.getI());    //Iteration
-        System.out.println(temp.getfX());   //Cost Hist
+        System.out.println(temp.getX());    //Theta, or optimal value
+        System.out.println(temp.getI());    //Iteration on break
+        System.out.println(temp.getfX());   //Cost History
     }
 
 }

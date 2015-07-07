@@ -139,10 +139,12 @@ public class MTJTests {
         System.out.println(temp.getX());    //Theta, or optimal value
         System.out.println(temp.getI());    //Iteration on break
         System.out.println(temp.getfX());   //Cost History
-        
+        //Passed
         System.out.println(GenFunc.mapFeature(new DenseMatrix(new double[][]{{1},{2}}), new DenseMatrix(new double[][]{{1},{2}}), 6));
         System.out.println(matC);
         System.out.println(MTJExt.toVector(matC));
+        //Passed
+        System.out.println(MTJExt.max(new DenseMatrix(new double[][]{{4,5,2,3,12,4},{5,2,16,2,3,10}}), 1));
     }
 
 }

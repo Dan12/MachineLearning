@@ -42,6 +42,7 @@ public class MTJExt {
         for(int r = 0; r < a.numRows(); r++){
             for(int c = 0; c < a.numColumns(); c++){
                 retArr[retAt][0] = a.get(r, c);
+                retAt++;
             }
         }
         return new DenseMatrix(retArr);
@@ -77,7 +78,7 @@ public class MTJExt {
         return powExtend(temp, new DenseMatrix(new double[][]{{0.5}}));
     }
     
-    //sums all elements of matrix along dim
+    //sums all elements of matrix along dim (1: ->, 2: v
     public static Matrix sum(Matrix a, int dim){
         double[][] retArr = null;
         if(dim == 1){
@@ -134,6 +135,42 @@ public class MTJExt {
     
     public static Matrix roundExtend(Matrix a){
         return opExtend(a, a, 7);
+    }
+    
+    //max along dim (1-rows (->), 2-cols (v))
+    public static Matrix max(Matrix a, int dim){
+        if(dim == 1){
+            double[][] temp = new double[a.numRows()][2];
+            for(int r = 0; r < a.numRows(); r++){
+                double max = a.get(r,0);
+                int index = 0;
+                for(int c = 1; c < a.numColumns(); c++){
+                    if(a.get(r, c) > max){
+                        max = a.get(r,c);
+                        index = c;
+                    }
+                }
+                temp[r][0] = max;
+                temp[r][1] = index;
+            }
+            return new DenseMatrix(temp);
+        }
+        else{
+            double[][] temp = new double[2][a.numColumns()];
+            for(int c = 0; c < a.numColumns(); c++){
+                double max = a.get(0,c);
+                int index = 0;
+                for(int r = 1; r < a.numRows(); r++){
+                    if(a.get(r, c) > max){
+                        max = a.get(r,c);
+                        index = r;
+                    }
+                }
+                temp[0][c] = max;
+                temp[1][c] = index;
+            }
+            return new DenseMatrix(temp);
+        }
     }
     
     //concat along dim (1-rows, 2-cols)

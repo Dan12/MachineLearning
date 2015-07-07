@@ -131,18 +131,14 @@ public class MTJTests {
         //Passed
         Fmincg mincg = new Fmincg(lrCostGrad);
         //Passed
-        System.out.println(mincg.getCost(new DenseMatrix(new double[][]{{20},{-0.2},{-0.2}})));
+        System.out.println(mincg.getCost(new DenseMatrix(new double[][]{{-21.53},{0.18},{0.17}})));
         //Passed
-        System.out.println(GenFunc.matrixToString(mincg.getGradient(new DenseMatrix(new double[][]{{20},{-0.2},{-0.2}}))));
-    
-        Fmincg.FmincgRet temp = mincg.runRoutine(MTJExt.Zeros(lrCostGrad.n, 1), 10);
-        
-        double tempA = Double.NaN;
-        System.out.println(Double.isNaN(tempA));
-        tempA = Double.POSITIVE_INFINITY;
-        System.out.println(Double.isInfinite(tempA));
-        tempA = Math.sqrt(-1);
-        System.out.println(tempA);
+        System.out.println(GenFunc.matrixToString(mincg.getGradient(new DenseMatrix(new double[][]{{-21.53},{0.18},{0.17}}))));
+        //Passed
+        Fmincg.FmincgRet temp = mincg.runRoutine(MTJExt.Zeros(lrCostGrad.n, 1), 20);
+        System.out.println(temp.getX());    //Theta
+        System.out.println(temp.getI());    //Iteration
+        System.out.println(temp.getfX());   //Cost Hist
     }
 
 }

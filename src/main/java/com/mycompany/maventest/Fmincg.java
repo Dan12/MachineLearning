@@ -1,3 +1,54 @@
+/*Minimize a continuous differentialble multivariate function. Starting point
+* is given by "X" (D by 1), and the function named in the string "f", must
+* return a function value and a vector of partial derivatives. The Polack-
+* Ribiere flavour of conjugate gradients is used to compute search directions,
+* and a line search using quadratic and cubic polynomial approximations and the
+* Wolfe-Powell stopping criteria is used together with the slope ratio method
+* for guessing initial step sizes. Additionally a bunch of checks are made to
+* make sure that exploration is taking place and that extrapolation will not
+* be unboundedly large. The "length" gives the length of the run: if it is
+* positive, it gives the maximum number of line searches, if negative its
+* absolute gives the maximum allowed number of function evaluations. You can
+* (optionally) give "length" a second component, which will indicate the
+* reduction in function value to be expected in the first line-search (defaults
+* to 1.0). The function returns when either its length is up, or if no further
+* progress can be made (ie, we are at a minimum, or so close that due to
+* numerical problems, we cannot get any closer). If the function terminates
+* within a few iterations, it could be an indication that the function value
+* and derivatives are not consistent (ie, there may be a bug in the
+* implementation of your "f" function). The function returns the found
+* solution "X", a vector of function values "fX" indicating the progress made
+* and "i" the number of iterations (line searches or function evaluations,
+* depending on the sign of "length") used.
+*
+* Usage: [X, fX, i] = fmincg(CostCradient function, initial values, iterations)
+*
+* Copyright (C) 2001 and 2002 by Carl Edward Rasmussen. Date 2002-02-13
+*
+*
+* (C) Copyright 1999, 2000 & 2001, Carl Edward Rasmussen
+* 
+* Permission is granted for anyone to copy, use, or modify these
+* programs and accompanying documents for purposes of research or
+* education, provided this copyright notice is retained, and note is
+* made of any changes that have been made.
+* 
+* These programs and documents are distributed without any warranty,
+* express or implied.  As the programs were written for research
+* purposes only, they have not been tested to the degree that would be
+* advisable in any important application.  All use of these programs is
+* entirely at the user's own risk.
+*
+* [ml-class] Changes Made:
+* 1) Function name and argument specifications
+* 2) Output display
+*
+* Daniel Weber Changes Made:
+* 1) Changed and added output format
+* 2) Changed input format
+* 3) Ported to java*/
+
+
 package com.mycompany.maventest;
 
 import no.uib.cipr.matrix.DenseMatrix;
@@ -70,7 +121,7 @@ public class Fmincg {
                     M--;
                     d2 = ((df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows()))).mult(s, new DenseMatrix(1,1))).get(0,0);
                     z3 = z3-z2; //z3 is now relative to the location of z2
-                    break;
+                    //break;  //TODO: get rid of break
                 }
                 if (f2 > f1+z1*RHO*d1 || d2 > -SIG*d1)
                     break;  //this is a failure
@@ -102,16 +153,43 @@ public class Fmincg {
                 f2 = getCost(init); df2 = getGradient(init);
                 M--;
                 d2 = ((df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows()))).mult(s, new DenseMatrix(1,1))).get(0,0);
-                break;
+                //break;  //TODO: get rid of break
             }   //end of line search
             
             if(success){    //if line search succeeded
-                f1 = f2; ret.setfX(MTJExt.concat(ret.getfX(), MTJExt.single(f1), 2));
+                f1 = f2; 
+                if(ret.getfX().numColumns()== 0)    //fX is empty
+                    ret.setfX(MTJExt.single(f1));
+                else
+                    ret.setfX(MTJExt.concat(ret.getfX(), MTJExt.single(f1), 2));
                 System.out.println("Iteration: "+i+" | Cost: "+f1);
+                double part1 = (MTJExt.minusExtend(df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows())).mult(df2, new DenseMatrix(1,1)), df1.transpose(new DenseMatrix(df1.numColumns(),df1.numRows())).mult(df2, new DenseMatrix(1,1)))).get(0,0);
+                double part2 = (df1.transpose(new DenseMatrix(df1.numColumns(), df1.numRows())).mult(df1, new DenseMatrix(1,1))).get(0,0);
+                s = MTJExt.minusExtend(new DenseMatrix(s,true).scale(part1/part2), df2);    //Polack-Ribiere direction
+                Matrix tmp = df1; df1 = df2; df2 = tmp;    //swap derivatives
+                d2 = (df1.transpose(new DenseMatrix(df1.numColumns(),df1.numRows())).mult(s, new DenseMatrix(1,1))).get(0,0);
+                if(d2 > 0){ //new slope must be negative
+                    s = new DenseMatrix(df1,true).scale(-1);    //otherwise use steepest direction
+                    d2 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);
+                }
+                z1 = z1 * Math.min(RATIO, d1/(d2-0)); //slope ratio but max RATIO
+                d1 = d2;
+                ls_failed = false;  //this line search did not fail
             }
-            break;
+            else{
+                init = X0; f1 = f0; df1 = df0; //restore point from before failed line search
+                if (ls_failed || i > length) //line search failed twice in a row
+                  break;    //or we ran out of time, so we give up
+                Matrix tmp = df1; df1 = df2; df2 = tmp;    //swap derivatives
+                s = new DenseMatrix(df1, true).scale(-1);   //try steepest
+                d1 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);
+                z1 = 1/(1-d1);                     
+                ls_failed = true;   //this line search failed
+            }
+            //break;  //TODO: get rid of break
         }
-        
+        ret.setI(i);
+        ret.setX(init);
         return ret;
     }
     

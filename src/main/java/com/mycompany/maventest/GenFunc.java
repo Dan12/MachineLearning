@@ -40,6 +40,31 @@ public class GenFunc {
         return new DenseMatrix(retArr);
     }
     
+    /*maps the two input features (n*1 Matricies) to quadratic features.
+    * Returns a new feature array with more features, comprising of X1, X2, X1.^2, X2.^2, X1.*X2, X1.*X2.^2, etc..*/
+    public static Matrix mapFeature(Matrix X1, Matrix X2, int deg){
+        if(X1.numColumns() != 1 || X2.numColumns() != 1 || X1.numRows() != X2.numRows())
+            throw new IllegalArgumentException("X1 and X2 must be the same size");
+        int colNums = 0;
+        for(int i = 1; i <= deg+1; i++)
+            colNums+=i;
+        double[][] retArr = new double[X1.numRows()][colNums-1];
+        int colAt = 0;
+        for(int i = 1; i <= deg; i++){
+            for(int j = 0; j <= i; j++){
+                Matrix X1Pow = MTJExt.powExtend(X1, MTJExt.single(i-j));
+                Matrix X2Pow = MTJExt.powExtend(X2, MTJExt.single(j));
+                double[][] vec = GenFunc.getMatrixArray(MTJExt.timesExtend(X1Pow, X2Pow));
+                for(int r = 0; r < X1.numRows(); r++){
+                    retArr[r][colAt] = vec[r][0];
+                }
+                colAt++;
+            }
+        }
+        
+        return MTJExt.concat(MTJExt.Ones(X1.numRows(), 1), new DenseMatrix(retArr), 1);
+    }
+    
     public static Matrix featureNormalize(Matrix a, Matrix mu, Matrix sig){
         return MTJExt.divideExtend(MTJExt.minusExtend(a,mu), sig);
     }

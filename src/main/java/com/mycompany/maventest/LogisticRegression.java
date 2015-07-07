@@ -67,6 +67,10 @@ public class LogisticRegression {
         return new DenseMatrix(costHist);
     }
     
+    public Matrix predict(Matrix z){
+        return MTJExt.roundExtend(GenFunc.sigmoid(z.mult(Theta, new DenseMatrix(z.numRows(),1))));
+    }
+    
     public Matrix getTheta(){
         return Theta;
     }

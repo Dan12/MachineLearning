@@ -36,6 +36,17 @@ public class MTJExt {
         return new DenseMatrix(new double[][]{{d}});
     }
     
+    public static Matrix toVector(Matrix a){
+        double[][] retArr = new double[a.numRows()*a.numColumns()][1];
+        int retAt = 0;
+        for(int r = 0; r < a.numRows(); r++){
+            for(int c = 0; c < a.numColumns(); c++){
+                retArr[retAt][0] = a.get(r, c);
+            }
+        }
+        return new DenseMatrix(retArr);
+    }
+    
     //compute mean along specified dimension (1-rows, get row vector; 2-cols, get column vector)
     public static Matrix mean(Matrix a, int dim){
         if(dim == 1){
@@ -117,6 +128,14 @@ public class MTJExt {
         return opExtend(a, a, 5);
     }
     
+    public static Matrix equalsExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 6);
+    }
+    
+    public static Matrix roundExtend(Matrix a){
+        return opExtend(a, a, 7);
+    }
+    
     //concat along dim (1-rows, 2-cols)
     public static Matrix concat(Matrix a, Matrix b, int dim){
         if(dim == 1){
@@ -156,7 +175,7 @@ public class MTJExt {
     }
     
     //Extends element-wise operations even if matricies do not have same dimensions
-    //0-add, 1-right sub, 2-mult, 3-right div, 4-pow, 5-log
+    //0-add, 1-right sub, 2-mult, 3-right div, 4-pow, 5-log, 6-equals(==), 7-round
     private static Matrix opExtend(Matrix a, Matrix b, int op){
         if(a.numColumns()== b.numColumns() && a.numRows()== b.numRows()){
             DenseMatrix result = new DenseMatrix(a, true);
@@ -178,9 +197,16 @@ public class MTJExt {
                             retArr[r][c] = a.get(r, c)/b.get(r, c);
                         else if(op == 4)
                             retArr[r][c] = Math.pow(a.get(r, c),b.get(r, c));
-                        else if(op == 5){
+                        else if(op == 5)
                             retArr[r][c] = Math.log(a.get(r, c));
+                        else if(op == 6){
+                            if(a.get(r,c) == b.get(r,c))
+                                retArr[r][c] = 1;
+                            else
+                                retArr[r][c] = 0;
                         }
+                        else if(op == 7)
+                            retArr[r][c] = Math.round(a.get(r,c));
                     }
                 }
                 result = new DenseMatrix(retArr);
@@ -208,6 +234,12 @@ public class MTJExt {
                             case 4:
                                 retArr[r][c] = Math.pow(a.get(0, c),b.get(r,c));
                                 break;
+                            case 6:
+                                if(a.get(0,c) == b.get(r,c))
+                                    retArr[r][c] = 1;
+                                else
+                                    retArr[r][c] = 0;
+                                break;
                         }
                     }
                 }
@@ -232,6 +264,12 @@ public class MTJExt {
                                 break;
                             case 4:
                                 retArr[r][c] = Math.pow(a.get(r, c),b.get(0,c));
+                                break;
+                            case 6:
+                                if(a.get(r,c) == b.get(0,c))
+                                    retArr[r][c] = 1;
+                                else
+                                    retArr[r][c] = 0;
                                 break;
                         }
                     }
@@ -263,6 +301,12 @@ public class MTJExt {
                             case 4:
                                 retArr[r][c] = Math.pow(a.get(r, 0),b.get(r,c));
                                 break;
+                            case 6:
+                                if(a.get(r,0) == b.get(r,c))
+                                    retArr[r][c] = 1;
+                                else
+                                    retArr[r][c] = 0;
+                                break;
                         }
                     }
                 }
@@ -287,6 +331,12 @@ public class MTJExt {
                                 break;
                             case 4:
                                 retArr[r][c] = Math.pow(a.get(r, c),b.get(r,0));
+                                break;
+                            case 6:
+                                if(a.get(r,c) == b.get(r,0))
+                                    retArr[r][c] = 1;
+                                else
+                                    retArr[r][c] = 0;
                                 break;
                         }
                     }
@@ -317,6 +367,12 @@ public class MTJExt {
                         case 4:
                             retArr[r][c] = Math.pow(a.get(0, 0),b.get(r,c));
                             break;
+                        case 6:
+                            if(a.get(0,0) == b.get(r,c))
+                                retArr[r][c] = 1;
+                            else
+                                retArr[r][c] = 0;
+                            break;
                     }
                 }
             }
@@ -341,6 +397,12 @@ public class MTJExt {
                             break;
                         case 4:
                             retArr[r][c] = Math.pow(a.get(r, c),b.get(0,0));
+                            break;
+                        case 6:
+                            if(a.get(r,c) == b.get(0,0))
+                                retArr[r][c] = 1;
+                            else
+                                retArr[r][c] = 0;
                             break;
                     }
                 }

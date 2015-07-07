@@ -21,11 +21,13 @@ public class Graph2D {
     private int[] yPoints;
     private String title = "";
     private boolean scatter;
-    private int scatterRad = 3;
+    private final int scatterRad = 3;
     private double[] xExt;
     private double[] yExt;
-    private int divisions = 10;
-    private int bufferSpace = 5;
+    private final int divisions = 10;
+    private final int bufferSpace = 5;
+    private int equationRes = 10;
+    private Equation equation = new Equation();
     
     public Graph2D(Matrix a){
         double[][] tempa = GenFunc.getMatrixArray(a);
@@ -127,6 +129,10 @@ public class Graph2D {
         }
     }
     
+    public void setEquation(Equation e){
+        equation = e;
+    }
+    
     public void showGraph(){
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame fr = new JFrame("Graph");
@@ -178,7 +184,22 @@ public class Graph2D {
                     g.drawLine(padding+xPoints[i], padding+graphHeight-yPoints[i], padding+xPoints[i+1], padding+graphHeight-yPoints[i+1]);     
             }
             
+            drawEquation(g);
+            
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, (int) (padding*0.8)));
             g.drawString(title, padding, (int) (padding-padding*0.2));
+        }
+        
+        private void drawEquation(Graphics g){
+            g.setColor(Color.RED);
+            int prevY = (int) GenFunc.map(equation.getYValue(GenFunc.map(padding, padding, padding+graphWidth, xExt[0], xExt[1])), yExt[0], yExt[1], 0, graphHeight);
+            for(int i = padding+equationRes; i < graphWidth+padding; i+=equationRes){
+                int curY = (int) GenFunc.map(equation.getYValue(GenFunc.map(i, padding, padding+graphWidth, xExt[0], xExt[1])), yExt[0], yExt[1], 0, graphHeight);
+                if(prevY >= 0 && prevY <= graphHeight && curY >= 0 && curY <= graphHeight)
+                    g.drawLine(i-equationRes, padding+graphHeight-prevY, i, padding+graphHeight-curY);
+                prevY = curY;
+            }
         }
         
     }

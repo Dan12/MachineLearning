@@ -139,6 +139,10 @@ public class MTJTests {
         System.out.println(temp.getX());    //Theta, or optimal value
         System.out.println(temp.getI());    //Iteration on break
         System.out.println(temp.getfX());   //Cost History
+        
+        System.out.println(GenFunc.mapFeature(new DenseMatrix(new double[][]{{1},{2}}), new DenseMatrix(new double[][]{{1},{2}}), 6));
+        System.out.println(matC);
+        System.out.println(MTJExt.toVector(matC));
     }
 
 }

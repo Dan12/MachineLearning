@@ -1,8 +1,6 @@
 package com.mycompany.maventest;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
@@ -173,6 +171,18 @@ public class MTJTests {
         System.out.println(handWriting.predict(MTJExt.concat(MTJExt.single(1), GenFunc.splitMatrix(tempX, 600, 600, 0, -1), 1)));
         System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(handWriting.predict(handWriting.getX()), handWriting.getY()), 2)));
         //System.out.println(GenFunc.splitMatrix(tempY, 490, 510, 0, 0));
+        
+        //Passed
+        tempY = ReadMatFile.readFile("ex3data1.mat", "y");
+        NeuralNetwork nn = new NeuralNetwork(tempX, tempY, 10, 1, new int[]{25});
+        //Passed
+        nn.loadWeights("ex3weights.mat");
+        //Passed
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 100, 100, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1100, 1100, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
+        System.out.println(GenFunc.splitMatrix(tempY, 495, 505, 0, 0));
+        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(nn.getY(), MTJExt.single(1))), 2)));
     }
 
 }

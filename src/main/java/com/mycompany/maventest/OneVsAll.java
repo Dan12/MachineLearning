@@ -1,8 +1,6 @@
 package com.mycompany.maventest;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 

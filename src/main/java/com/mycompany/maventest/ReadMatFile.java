@@ -21,5 +21,13 @@ public class ReadMatFile {
         double[][] tempArr = ((MLDouble) temp.getMLArray(mname)).getArray(); 
         return new DenseMatrix(tempArr);
     }
+    
+    public static void getFileContent(String fname){
+        MatFileReader temp = null;
+        try {
+            temp = new MatFileReader(new File(resourcePath.concat(fname)));
+        } catch (IOException ex) {}
+        System.out.println(temp.getContent());
+    }
 
 }

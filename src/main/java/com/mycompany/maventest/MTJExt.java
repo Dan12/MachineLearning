@@ -137,6 +137,10 @@ public class MTJExt {
         return opExtend(a, a, 7);
     }
     
+    public static Matrix moduloExtend(Matrix a, Matrix b){
+        return opExtend(a, b, 8);
+    }
+    
     //max along dim (1-rows (->), 2-cols (v))
     public static Matrix max(Matrix a, int dim){
         if(dim == 1){
@@ -244,6 +248,8 @@ public class MTJExt {
                         }
                         else if(op == 7)
                             retArr[r][c] = Math.round(a.get(r,c));
+                        else if(op == 8)
+                            retArr[r][c] = ((int) a.get(r, c))%((int)b.get(r, c));
                     }
                 }
                 result = new DenseMatrix(retArr);
@@ -277,6 +283,9 @@ public class MTJExt {
                                 else
                                     retArr[r][c] = 0;
                                 break;
+                            case 8:
+                                retArr[r][c] = ((int) a.get(0, c))%((int)b.get(r, c));
+                                break;
                         }
                     }
                 }
@@ -307,6 +316,9 @@ public class MTJExt {
                                     retArr[r][c] = 1;
                                 else
                                     retArr[r][c] = 0;
+                                break;
+                            case 8:
+                                retArr[r][c] = ((int) a.get(r, c))%((int)b.get(0, c));
                                 break;
                         }
                     }
@@ -344,6 +356,9 @@ public class MTJExt {
                                 else
                                     retArr[r][c] = 0;
                                 break;
+                            case 8:
+                                retArr[r][c] = ((int) a.get(r, 0))%((int)b.get(r, c));
+                                break;
                         }
                     }
                 }
@@ -374,6 +389,9 @@ public class MTJExt {
                                     retArr[r][c] = 1;
                                 else
                                     retArr[r][c] = 0;
+                                break;
+                            case 8:
+                                retArr[r][c] = ((int) a.get(r, c))%((int)b.get(r, 0));
                                 break;
                         }
                     }
@@ -410,6 +428,9 @@ public class MTJExt {
                             else
                                 retArr[r][c] = 0;
                             break;
+                        case 8:
+                            retArr[r][c] = ((int) a.get(0, 0))%((int)b.get(r, c));
+                            break;
                     }
                 }
             }
@@ -440,6 +461,9 @@ public class MTJExt {
                                 retArr[r][c] = 1;
                             else
                                 retArr[r][c] = 0;
+                            break;
+                        case 8:
+                            retArr[r][c] = ((int) a.get(r, c))%((int)b.get(0, 0));
                             break;
                     }
                 }

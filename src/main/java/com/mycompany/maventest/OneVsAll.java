@@ -1,18 +1,21 @@
 package com.mycompany.maventest;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
 public class OneVsAll {
 
-    Matrix X;
-    Matrix y;
-    int num_labels;
-    double lambda;
-    int m;
-    int n;
-    Matrix Theta;
-    CostGradient lrCostGrad;
+    private Matrix X;
+    private Matrix y;
+    private int num_labels;
+    private double lambda;
+    private int m;
+    private int n;
+    private Matrix Theta;
+    private CostGradient lrCostGrad;
     
     public OneVsAll(Matrix x, Matrix y, int n, double l){
         this.X = x;
@@ -22,8 +25,10 @@ public class OneVsAll {
         this.m = x.numRows();
         this.n = x.numColumns();
         this.Theta = MTJExt.Zeros(this.n, num_labels);
-        
-        lrCostGrad = new CostGradient(this.X, this.y, this.lambda){
+    }
+    
+    public void setCostGradient(int labelAt){
+        lrCostGrad = new CostGradient(this.X, MTJExt.equalsExtend(this.y, MTJExt.single(labelAt)), this.lambda){
             
             @Override
             public double Cost(Matrix Theta){
@@ -50,8 +55,9 @@ public class OneVsAll {
     }
     
     public void runRoutine(){
-        Fmincg mincg = new Fmincg(lrCostGrad);
         for(int i = 0; i < num_labels; i++){
+            setCostGradient(i);
+            Fmincg mincg = new Fmincg(lrCostGrad);
             Fmincg.FmincgRet temp = mincg.runRoutine(MTJExt.Zeros(this.n, 1), 50);
             Matrix t = temp.getX();
             for(int c = 0; c < this.n; c++)
@@ -59,8 +65,14 @@ public class OneVsAll {
         }
     }
     
+    public void loadTheta(String fname){
+        try {
+            Theta = new DenseMatrix(Readfile.getFileArray(fname));
+        } catch (IOException e) { System.out.println(e);}
+    }
+    
     public Matrix predict(Matrix z){
-        Matrix temp = MTJExt.max(GenFunc.sigmoid(X.mult(Theta.transpose(new DenseMatrix(n,num_labels)), new DenseMatrix(m,num_labels))), 1);
+        Matrix temp = MTJExt.max(GenFunc.sigmoid(z.mult(Theta.transpose(new DenseMatrix(n,num_labels)), new DenseMatrix(z.numRows(),num_labels))), 1);
         return GenFunc.splitMatrix(temp, 0, -1, 1, 1);
     } 
     

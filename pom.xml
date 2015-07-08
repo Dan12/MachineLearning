@@ -17,6 +17,11 @@
             <artifactId>mtj</artifactId>
             <version>1.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>JMatIo</groupId>
+            <artifactId>JMatIo</artifactId>
+            <version>071005</version>
+        </dependency>
     </dependencies>
     <name>MachineLearning</name>
 </project>

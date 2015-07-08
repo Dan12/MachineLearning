@@ -1,6 +1,8 @@
 package com.mycompany.maventest;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
@@ -145,6 +147,32 @@ public class MTJTests {
         System.out.println(MTJExt.toVector(matC));
         //Passed
         System.out.println(MTJExt.max(new DenseMatrix(new double[][]{{4,5,2,3,12,4},{5,2,16,2,3,10}}), 1));
+        //Passed
+        Matrix tempX = ReadMatFile.readFile("ex3data1.mat", "X");
+        System.out.println(tempX.get(0, 130));
+        Matrix tempY = ReadMatFile.readFile("ex3data1.mat", "y");
+        System.out.println(tempY.get(1300, 0));
+        //Passed
+        System.out.println(MTJExt.equalsExtend(new DenseMatrix(new double[][]{{1,3,4,2},{2,2,4,3}}), MTJExt.single(2)));
+        //Passed
+        System.out.println(MTJExt.roundExtend(new DenseMatrix(new double[][]{{1.123,3.5,4.1,2.9},{2.8,2.72354,4.111,3.643}})));
+        //Passed
+        tempY = MTJExt.moduloExtend(tempY, MTJExt.single(10));
+        OneVsAll handWriting = new OneVsAll(tempX, tempY, 10, 0.1);
+        //Passed
+        handWriting.addBias();
+        //Passed
+        //handWriting.runRoutine();
+        //Passed
+//        System.out.println(handWriting.getTheta());
+//        try {
+//            WriteFile.writeMatrix("weights.txt", handWriting.getTheta());
+//        } catch (IOException e) { System.out.println(e);}
+        handWriting.loadTheta("weights.txt");
+        //Passed
+        System.out.println(handWriting.predict(MTJExt.concat(MTJExt.single(1), GenFunc.splitMatrix(tempX, 600, 600, 0, -1), 1)));
+        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(handWriting.predict(handWriting.getX()), handWriting.getY()), 2)));
+        //System.out.println(GenFunc.splitMatrix(tempY, 490, 510, 0, 0));
     }
 
 }

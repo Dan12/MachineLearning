@@ -213,7 +213,7 @@ public class MTJTests {
         System.out.println(GenFunc.sigmoidGradient(new DenseMatrix(new double[][]{{1, -0.5, 0, 0.5, 1}})));
         //Passed
         //nn.getCostGradient().Gradient(GenFunc.unroll(nn.getAllTheta()));
-        //Passed
+        //Passed, takes about 4 mins for 50 iterations
         //nn.runRoutine();
         //Passed
         //System.out.println(nn.getAllTheta()[1]);

@@ -32,6 +32,16 @@ public class MTJExt {
         return new DenseMatrix(new double[m][n]);
     }
     
+    public static Matrix Range(int s, int i, int f){
+        double[][] retArr = new double[1][(f-s+1)/i];
+        int ind = 0;
+        for(int v = s; v <= f; v+=i){
+            retArr[0][ind] = v;
+            ind++;
+        }
+        return new DenseMatrix(retArr);
+    }
+    
     public static Matrix single(double d){
         return new DenseMatrix(new double[][]{{d}});
     }

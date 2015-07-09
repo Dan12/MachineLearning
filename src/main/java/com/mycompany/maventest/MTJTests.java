@@ -5,6 +5,8 @@ import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
 public class MTJTests {
+    
+    private static double test = 15.0;
 
     public MTJTests(){}
     
@@ -146,9 +148,9 @@ public class MTJTests {
         //Passed
         System.out.println(MTJExt.max(new DenseMatrix(new double[][]{{4,5,2,3,12,4},{5,2,16,2,3,10}}), 1));
         //Passed
-        Matrix tempX = ReadMatFile.readFile("ex3data1.mat", "X");
+        Matrix tempX = MatFileInt.readFile("ex3data1.mat", "X");
         System.out.println(tempX.get(0, 130));
-        Matrix tempY = ReadMatFile.readFile("ex3data1.mat", "y");
+        Matrix tempY = MatFileInt.readFile("ex3data1.mat", "y");
         System.out.println(tempY.get(1300, 0));
         //Passed
         System.out.println(MTJExt.equalsExtend(new DenseMatrix(new double[][]{{1,3,4,2},{2,2,4,3}}), MTJExt.single(2)));
@@ -173,8 +175,8 @@ public class MTJTests {
         //System.out.println(GenFunc.splitMatrix(tempY, 490, 510, 0, 0));
         
         //Passed
-        tempY = ReadMatFile.readFile("ex3data1.mat", "y");
-        NeuralNetwork nn = new NeuralNetwork(tempX, tempY, 10, 1, new int[]{25});
+        tempY = MatFileInt.readFile("ex3data1.mat", "y");
+        NeuralNetwork nn = new NeuralNetwork(tempX, tempY, 10, 1, new int[]{25}, 1);
         //Passed
         nn.loadWeights("ex3weights.mat");
         //Passed
@@ -183,6 +185,49 @@ public class MTJTests {
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
         System.out.println(GenFunc.splitMatrix(tempY, 495, 505, 0, 0));
         System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(nn.getY(), MTJExt.single(1))), 2)));
+        //Passed
+        matC = GenFunc.unroll(new Matrix[]{new DenseMatrix(new double[][]{{1,2,3,4},{5,10,15,20}}), new DenseMatrix(new double[][]{{13,21,35,43,31},{51,102,150,201,32}})});
+        System.out.println(matC);
+        //Passed
+        int sumRows = 0;
+        Matrix tempmatC = GenFunc.reshape(matC, sumRows, sumRows+2*4-1, 2, 4);
+        System.out.println(tempmatC);
+        sumRows+=2*4;
+        matC = GenFunc.reshape(matC, sumRows, sumRows+2*5-1, 2, 5);
+        System.out.println(matC);
+        //Passed
+        CostGradient testGrad = new CostGradient(matC, matC, 1){
+            
+            @Override
+            public double Cost(Matrix Theta){
+                return test;
+            }
+        };
+        test = 10.0;
+        System.out.println(testGrad.Cost(null));
+        //Passed
+        System.out.println(nn.getCostGradient().Cost(GenFunc.unroll(nn.getAllTheta())));
+        //Passed
+        System.out.println(MTJExt.Range(0, 1, 19));
+        //Passed
+        System.out.println(GenFunc.sigmoidGradient(new DenseMatrix(new double[][]{{1, -0.5, 0, 0.5, 1}})));
+        //Passed
+        //nn.getCostGradient().Gradient(GenFunc.unroll(nn.getAllTheta()));
+        //Passed
+        //nn.runRoutine();
+        //Passed
+        //System.out.println(nn.getAllTheta()[1]);
+        //MatFileInt.writeMatrixArr(nn.getAllTheta(), new String[]{"Theta1","Theta2"}, "nnweights.mat");
+        //System.out.println(MatFileInt.readFile("nnweights.mat", "Theta2"));
+        //Passed
+        nn.loadWeights("nnweights.mat");
+        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(nn.getY(), MTJExt.single(1))), 2)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 100, 100, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 600, 600, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1100, 1100, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2200, 2200, 0, -1)));
+        System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2700, 2700, 0, -1)));
     }
 
 }

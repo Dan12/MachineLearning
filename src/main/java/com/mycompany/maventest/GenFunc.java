@@ -18,6 +18,10 @@ public class GenFunc {
         return MTJExt.divideExtend(MTJExt.single(1), MTJExt.plusExtend(MTJExt.single(1), MTJExt.powExtend(MTJExt.single(Math.E), tempZ.scale(-1))));
     }
     
+    public static Matrix sigmoidGradient(Matrix z){
+        return MTJExt.timesExtend(sigmoidEx(z), invSigmoidEx(z));
+    }
+    
     public static Matrix sigmoidEx(Matrix z){
         double[][] retArr = new double[z.numRows()][z.numColumns()];
         for(int r = 0; r < z.numRows(); r++){
@@ -38,6 +42,29 @@ public class GenFunc {
             }
         }
         return new DenseMatrix(retArr);
+    }
+    
+    public static Matrix reshape(Matrix a, int rs, int rf, int nr, int nc){
+        double[][] retArr = new double[nr][nc];
+        int rAt = 0;
+        int cAt = 0;
+        for(int r = rs; r <= rf; r++){
+            retArr[rAt][cAt] = a.get(r, 0);
+            cAt++;
+            if(cAt >= nc){
+                cAt = 0;
+                rAt++;
+            }
+        }
+        return new DenseMatrix(retArr);
+    }
+    
+    public static Matrix unroll(Matrix[] a){
+        Matrix ret = MTJExt.toVector(a[0]);
+        for(int i = 1; i < a.length; i++){
+            ret = MTJExt.concat(ret, MTJExt.toVector(a[i]), 2);
+        }
+        return ret;
     }
     
     /*maps the two input features (n*1 Matricies) to quadratic features.
@@ -88,7 +115,21 @@ public class GenFunc {
     }
     
     public static Matrix splitMatrix(Matrix a, int rs, int rf, int cs, int cf){
-        return new DenseMatrix(splitDouble(getMatrixArray(a), rs, rf, cs, cf));
+        if(rf == -1)
+            rf = a.numRows()-1;
+        if(cf == -1)
+            cf = a.numColumns()-1;
+        double[][] ret = new double[rf-rs+1][cf-cs+1];
+        int curR = 0;
+        for(int r = rs; r <= rf; r++){
+            int curC = 0;
+            for(int c = cs; c <= cf; c++){
+                ret[curR][curC] = a.get(r,c);
+                curC++;
+            }
+            curR++;
+        }
+        return new DenseMatrix(ret);
     }
     
     public static double[][] getMatrixArray(Matrix a){

@@ -28,6 +28,7 @@ public class Graph2D {
     private final int bufferSpace = 5;
     private int equationRes = 10;
     private Equation equation = new Equation();
+    Panel p;
     
     public Graph2D(Matrix a){
         double[][] tempa = GenFunc.getMatrixArray(a);
@@ -133,10 +134,14 @@ public class Graph2D {
         equation = e;
     }
     
+    public void update(){
+        p.repaint();
+    }
+    
     public void showGraph(){
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame fr = new JFrame("Graph");
-        Panel p = new Panel(panelWidth, panelHeight);
+        p = new Panel(panelWidth, panelHeight);
         fr.setContentPane(p);
         fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fr.setLocation(10, 10);
@@ -166,12 +171,12 @@ public class Graph2D {
             
             for(int i = padding; i <= padding+graphWidth; i+=graphWidth/divisions){
                 g.drawLine(i, padding+graphHeight+bufferSpace, i, (int) (padding+graphHeight+padding*0.2+bufferSpace));
-                g.drawString(GenFunc.map(i,padding,padding+graphWidth,xExt[0],xExt[1])+"", i, panelHeight-4);
+                g.drawString(String.format("%.1f",GenFunc.map(i,padding,padding+graphWidth,xExt[0],xExt[1])), i, panelHeight-4);
             }
             
             for(int i = padding; i <= padding+graphHeight; i+=graphWidth/divisions){
                 g.drawLine((int) (padding-padding*0.2-bufferSpace), panelHeight-i, padding-bufferSpace, panelHeight-i);
-                g.drawString(GenFunc.map(i,padding,padding+graphHeight,yExt[0],yExt[1])+"", 4, panelHeight-i);
+                g.drawString(String.format("%.1f",GenFunc.map(i,padding,padding+graphHeight,yExt[0],yExt[1])), 4, panelHeight-i);
             }
             
             if(scatter){

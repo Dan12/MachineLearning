@@ -13,7 +13,7 @@ public class GraphTests {
             
             @Override
             public double getYValue(double x){
-                return x*2;
+                return 2+1*x+0.1*x*x;
             }
             
         };

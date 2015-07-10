@@ -228,6 +228,10 @@ public class MTJTests {
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2200, 2200, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2700, 2700, 0, -1)));
+        
+        //Passed
+        LinearRegressionTests lrtests = new LinearRegressionTests(MatFileInt.readFile("ex5data1.mat", "X"),MatFileInt.readFile("ex5data1.mat", "y"),MatFileInt.readFile("ex5data1.mat", "Xval"),MatFileInt.readFile("ex5data1.mat", "yval"),MatFileInt.readFile("ex5data1.mat", "Xtest"),MatFileInt.readFile("ex5data1.mat", "ytest"));
+        lrtests.runTests();
     }
 
 }

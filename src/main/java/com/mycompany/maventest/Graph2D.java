@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import no.uib.cipr.matrix.Matrix;
@@ -17,8 +18,9 @@ public class Graph2D {
     private final int padding = 35;
     private final int graphWidth = panelWidth-padding*2;
     private final int graphHeight = panelHeight-padding*2;
-    private int[] xPoints;
-    private int[] yPoints;
+    private ArrayList<double[]> xPoints;
+    private ArrayList<double[]> yPoints;
+    private ArrayList<Color> colors;
     private String title = "";
     private boolean scatter;
     private final int scatterRad = 3;
@@ -27,30 +29,66 @@ public class Graph2D {
     private final int divisions = 10;
     private final int bufferSpace = 5;
     private int equationRes = 10;
-    private Equation equation = new Equation();
+    private Equation equation = new Equation(Color.RED);
     Panel p;
     
-    public Graph2D(Matrix a){
+    public Graph2D(){
+        xPoints = new ArrayList<double[]>();
+        yPoints = new ArrayList<double[]>();
+        colors = new ArrayList<Color>();
+        xExt = new double[]{Double.MAX_VALUE,Double.MIN_VALUE};
+        yExt = new double[]{Double.MAX_VALUE,Double.MIN_VALUE};
+    }
+    
+    public void addPlot(Matrix a, Color c){
         double[][] tempa = GenFunc.getMatrixArray(a);
+        colors.add(c);
         singleArr(tempa);
     }
     
-    public Graph2D(Matrix a, Matrix b){
+    public void addPlot(Matrix a, Matrix b, Color c){
         double[][] tempa = GenFunc.getMatrixArray(a);
         double[][] tempb = GenFunc.getMatrixArray(b);
+        colors.add(c);
         doubleArr(tempa, tempb);
     }
     
-    public Graph2D(double[][] a){
+    public void addPlot(double[][] a, Color c){
+        colors.add(c);
         singleArr(a);
     }
     
-    public Graph2D(double[][] a, double[][] b){
+    public void addPlot(double[][] a, double[][] b, Color c){
+        colors.add(c);
         doubleArr(a, b);
     }
     
     //side: 1-a is x, 2-a is y
-    public Graph2D(double[] a, int side){
+    public void addPlot(double[][] a, int side, Color c){
+        colors.add(c);
+        double[] aa = new double[a.length];
+        double[] bb = new double[a.length];
+        for(int i = 0; i < a.length; i++){
+            aa[i] = a[i][0];
+            bb[i] = i;
+        }
+        if(side == 1)
+            setLines(aa, bb);
+        else
+            setLines(bb, aa);
+    }
+    
+    public void setXExtremes(double[] x){
+        xExt = x;
+    }
+    
+    public void setYExtremes(double[] y){
+        yExt = y;
+    }
+    
+    //side: 1-a is x, 2-a is y
+    public void addPlot(double[] a, int side, Color c){
+        colors.add(c);
         double[] vals = new double[a.length];
         for(int i = 0; i < a.length; i++)
             vals[i] = i;
@@ -58,6 +96,12 @@ public class Graph2D {
             setLines(a, vals);
         else
             setLines(vals, a);
+    }
+    
+    public void removePlot(int i){
+        xPoints.remove(i);
+        yPoints.remove(i);
+        colors.remove(i);
     }
     
     private void singleArr(double[][] a){
@@ -89,22 +133,18 @@ public class Graph2D {
     }
     
     private void setLines(double[] a, double[] b){
-        xExt = minMax(a);
-        yExt = minMax(b);
-        xPoints = mappedPoints(xExt, a, graphWidth);
-        yPoints = mappedPoints(yExt, b, graphHeight);
+        xExt = minMax(a, xExt);
+        yExt = minMax(b, yExt);
+        xPoints.add(a);
+        yPoints.add(b);
     }
     
-    private int[] mappedPoints(double[] ext, double[] a, int dim){
-        int[] ret = new int[a.length];
-        for(int i = 0; i < a.length; i++){
-            ret[i] = (int) GenFunc.map(a[i], ext[0], ext[1], 0, dim);
-        }
-        return ret;
+    private int mapPoint(double a, double[] ext, int dim){
+        return (int) GenFunc.map(a, ext[0], ext[1], 0, dim);
     }
     
-    private double[] minMax(double[] a){
-        double[] ret = new double[]{a[0],a[0]};
+    private double[] minMax(double[] a, double[] cur){
+        double[] ret = new double[]{cur[0],cur[1]};
         for(int i = 0; i < a.length; i++){
             if(a[i] < ret[0])
                 ret[0] = a[i];
@@ -179,25 +219,27 @@ public class Graph2D {
                 g.drawString(String.format("%.1f",GenFunc.map(i,padding,padding+graphHeight,yExt[0],yExt[1])), 4, panelHeight-i);
             }
             
-            if(scatter){
-                for(int i = 0; i < xPoints.length; i++)
-                    g.fillOval(padding+xPoints[i]-scatterRad, padding+graphHeight-yPoints[i]-scatterRad, scatterRad*2, scatterRad*2);
-            }
-                
-            else{
-                for(int i = 0; i < xPoints.length-1; i++)
-                    g.drawLine(padding+xPoints[i], padding+graphHeight-yPoints[i], padding+xPoints[i+1], padding+graphHeight-yPoints[i+1]);     
+            for(int k = 0; k < xPoints.size(); k++){
+                g.setColor(colors.get(k));
+                if(scatter){
+                    for(int i = 0; i < xPoints.get(k).length; i++)
+                        g.fillOval(padding+mapPoint(xPoints.get(k)[i], xExt, graphWidth)-scatterRad, padding+graphHeight-mapPoint(yPoints.get(k)[i], yExt, graphHeight)-scatterRad, scatterRad*2, scatterRad*2);
+                }
+                else{
+                    for(int i = 0; i < xPoints.get(k).length-1; i++)
+                        g.drawLine(padding+mapPoint(xPoints.get(k)[i], xExt, graphWidth), padding+graphHeight-mapPoint(yPoints.get(k)[i], yExt, graphHeight), padding+mapPoint(xPoints.get(k)[i+1], xExt, graphWidth), padding+graphHeight-mapPoint(yPoints.get(k)[i+1], yExt, graphHeight));     
+                }
             }
             
             drawEquation(g);
             
             g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, (int) (padding*0.8)));
+            g.setFont(new Font("Arial", Font.BOLD, (int) (padding*0.7)));
             g.drawString(title, padding, (int) (padding-padding*0.2));
         }
         
         private void drawEquation(Graphics g){
-            g.setColor(Color.RED);
+            g.setColor(equation.getColor());
             int prevY = (int) GenFunc.map(equation.getYValue(GenFunc.map(padding, padding, padding+graphWidth, xExt[0], xExt[1])), yExt[0], yExt[1], 0, graphHeight);
             for(int i = padding+equationRes; i < graphWidth+padding; i+=equationRes){
                 int curY = (int) GenFunc.map(equation.getYValue(GenFunc.map(i, padding, padding+graphWidth, xExt[0], xExt[1])), yExt[0], yExt[1], 0, graphHeight);

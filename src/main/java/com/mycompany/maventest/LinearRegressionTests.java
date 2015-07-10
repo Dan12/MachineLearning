@@ -1,5 +1,6 @@
 package com.mycompany.maventest;
 
+import java.awt.Color;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrix;
 
@@ -38,8 +39,9 @@ public class LinearRegressionTests {
     }
     
     public void runTests(){
-        visualizeTrain();
-        //System.out.println(polyFeatures(X, 4));
+        visualizePolyData(X, y, 8, 1);
+        polyLearningCurve(X, y, Xval, yval, 1, 8);
+        polyValidationCurve(X, y, Xval, yval, 8);
     }
     
     private Matrix polyFeatures(Matrix x, int p){
@@ -47,16 +49,69 @@ public class LinearRegressionTests {
         return MTJExt.powExtend(ret, MTJExt.Range(1, 1, p));
     }
     
-    public void visualizeTrain(){
-        final int deg = 8;
-        Graph2D g2d = new Graph2D(X, y);
+    public void polyLearningCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, double l, int d){
+        Matrix xPoly = biased(featureNoramlize(polyFeatures(x, d)));
+        Matrix xvPoly = biased(GenFunc.featureNormalize(polyFeatures(xv, d), mu, sigma));
+        learningCurve(xPoly, y, xvPoly, yv, l);
+    }
+    
+    public void learningCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, double l){
+        Matrix trainError = new DenseMatrix(x.numRows(),1);
+        Matrix validationError = new DenseMatrix(x.numRows(),1);
+        for(int i = 0; i < m; i++){
+            setCostGradient(GenFunc.splitMatrix(x, 0, i, 0, -1), GenFunc.splitMatrix(y, 0, i, 0, -1), l);
+            Fmincg min = new Fmincg(cg);
+            Fmincg.FmincgRet temp = min.runRoutine(MTJExt.Zeros(x.numColumns(), 1), 200);
+            setCostGradient(GenFunc.splitMatrix(x, 0, i, 0, -1), GenFunc.splitMatrix(y, 0, i, 0, -1), 0);
+            trainError.set(i, 0, cg.Cost(temp.getX()));
+            setCostGradient(xv, yv, 0);
+            validationError.set(i, 0, cg.Cost(temp.getX()));
+        }
+        Graph2D g2d = new Graph2D();
+        g2d.addPlot(GenFunc.getMatrixArray(trainError), 2, Color.BLUE);
+        g2d.addPlot(GenFunc.getMatrixArray(validationError), 2, Color.GREEN);
+        g2d.setTitle("Learning(#examples) Curve");
+        g2d.showGraph();
+    }
+    
+    public void polyValidationCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, int d){
+        Matrix xPoly = biased(featureNoramlize(polyFeatures(x, d)));
+        Matrix xvPoly = biased(GenFunc.featureNormalize(polyFeatures(xv, d), mu, sigma));
+        validationCurve(xPoly, y, xvPoly, yv);
+    }
+    
+    public void validationCurve(Matrix x, Matrix y, Matrix xv, Matrix yv){
+        Matrix lambdaTests = new DenseMatrix(new double[][]{{0}, {0.001}, {0.003}, {0.01}, {0.03}, {0.1}, {0.3}, {1}, {3}, {10}});
+        //double[] lambdaTests = new double[]{0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10};
+        Matrix trainError = new DenseMatrix(lambdaTests.numRows(),1);
+        Matrix validationError = new DenseMatrix(lambdaTests.numRows(),1);
+        for(int i = 0; i < lambdaTests.numRows(); i++){
+            setCostGradient(x, y, lambdaTests.get(i,0));
+            Fmincg min = new Fmincg(cg);
+            Fmincg.FmincgRet temp = min.runRoutine(MTJExt.Zeros(x.numColumns(), 1), 200);
+            setCostGradient(x, y, 0);
+            trainError.set(i, 0, cg.Cost(temp.getX()));
+            setCostGradient(xv, yv, 0);
+            validationError.set(i, 0, cg.Cost(temp.getX()));
+        }
+        Graph2D g2d = new Graph2D();
+        g2d.addPlot(lambdaTests, trainError, Color.BLUE);
+        g2d.addPlot(lambdaTests, validationError, Color.GREEN);
+        g2d.setTitle("Validation(lambda) Curve");
+        g2d.showGraph();
+    }
+    
+    public void visualizePolyData(Matrix x, Matrix y, int d, double l){
+        final int deg = d;
+        Graph2D g2d = new Graph2D();
+        g2d.addPlot(x,y, java.awt.Color.BLACK);
         g2d.setMode(2);
-        setCostGradient(biased(featureNoramlize(polyFeatures(X, deg))), y, 0);
+        setCostGradient(biased(featureNoramlize(polyFeatures(x, deg))), y, l);
         Fmincg min = new Fmincg(cg);
-        Fmincg.FmincgRet temp = min.runRoutine(MTJExt.Zeros(deg+1, 1), 500);
+        Fmincg.FmincgRet temp = min.runRoutine(MTJExt.Zeros(deg+1, 1), 200);
         final Matrix theta = temp.getX();
         System.out.println(theta);
-        g2d.setEquation(new Equation(){
+        g2d.setEquation(new Equation(java.awt.Color.RED){
             @Override
             public double getYValue(double x){
                 Matrix xMat = GenFunc.featureNormalize(polyFeatures(MTJExt.single(x), deg), mu, sigma);
@@ -64,6 +119,7 @@ public class LinearRegressionTests {
                 return xMat.mult(theta, new DenseMatrix(1,1)).get(0,0);
             }
         });
+        g2d.setTitle("Data Curve");
         g2d.showGraph();
     }
     

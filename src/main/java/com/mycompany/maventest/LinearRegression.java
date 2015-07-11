@@ -57,9 +57,10 @@ public class LinearRegression {
         X = GenFunc.featureNormalize(X, mu, sigma);
     }
 
-    public Matrix gradientDescent(int iterations, double alpha, boolean rec){
-        double[][] costHist = new double[iterations][1];
-        for(int i = 0; i < iterations; i++){
+    //perform gradient descent with learning rate alpha for iterns iterations, returns cost history if rec is true
+    public Matrix gradientDescent(int iterns, double alpha, boolean rec){
+        double[][] costHist = new double[iterns][1];
+        for(int i = 0; i < iterns; i++){
             Matrix temp = (X.transpose(new DenseMatrix(n,m))).mult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)),y), new DenseMatrix(n,1));
             Theta = MTJExt.minusExtend(Theta,temp.scale(alpha/m));
             if(rec)
@@ -68,11 +69,13 @@ public class LinearRegression {
         return new DenseMatrix(costHist);
     }
     
+    //caluclate minumum using the normal equation
     public void normalEquation(){
         Matrix temp = X.transpose(new DenseMatrix(n,m));
         Theta = (((temp.mult(X, new DenseMatrix(n,n))).solve(Matrices.identity(n), new DenseMatrix(n,n))).mult(temp, new DenseMatrix(n,m))).mult(y, new DenseMatrix(n,1));
     }
     
+    //predict output of a using current values of theta
     public double predict(Matrix a){
         return a.mult(Theta,new DenseMatrix(1,1)).get(0, 0);
     }

@@ -8,6 +8,7 @@ public class MTJExt {
 
     public MTJExt(){}
     
+    //returns m*n matrix of ones
     public static Matrix Ones(int m, int n){
         double[][] temp = new double[m][n];
         for(int r = 0; r < m; r++){
@@ -18,6 +19,7 @@ public class MTJExt {
         return new DenseMatrix(temp);
     }
     
+    //returns m*n matrix of con
     public static Matrix Const(int m, int n, double con){
         double[][] temp = new double[m][n];
         for(int r = 0; r < m; r++){
@@ -28,10 +30,12 @@ public class MTJExt {
         return new DenseMatrix(temp);
     }
     
+    //returns m*n matrix of zeros
     public static Matrix Zeros(int m, int n){
         return new DenseMatrix(new double[m][n]);
     }
     
+    //returns 1*x matrix of values from s-f at intervals i
     public static Matrix Range(int s, int i, int f){
         double[][] retArr = new double[1][(f-s+1)/i];
         int ind = 0;
@@ -42,10 +46,12 @@ public class MTJExt {
         return new DenseMatrix(retArr);
     }
     
+    //returns 1*1 matrix of d
     public static Matrix single(double d){
         return new DenseMatrix(new double[][]{{d}});
     }
     
+    //returns x*1 matrix representation of a
     public static Matrix toVector(Matrix a){
         double[][] retArr = new double[a.numRows()*a.numColumns()][1];
         int retAt = 0;
@@ -58,7 +64,7 @@ public class MTJExt {
         return new DenseMatrix(retArr);
     }
     
-    //compute mean along specified dimension (1-rows, get row vector; 2-cols, get column vector)
+    //compute mean along specified dimension (1-rows, get x*1 matrix; 2-cols, get 1*x matrix)
     public static Matrix mean(Matrix a, int dim){
         if(dim == 1){
             double[][] retArr = GenFunc.getMatrixArray(sum(a, 1));
@@ -76,7 +82,7 @@ public class MTJExt {
         }
     }
     
-    //compute standard deviation along specified dimension (1-rows, get row vector; 2-cols, get column vector)
+    //compute standard deviation along specified dimension (1-rows, get x*1 matrix; 2-cols, get 1*x matrix)
     public static Matrix std(Matrix a, int dim){
         Matrix temp = sum(powExtend(minusExtend(a, mean(a, dim)),new DenseMatrix(new double[][]{{2}})),dim);
         double divisor = 0;
@@ -88,7 +94,7 @@ public class MTJExt {
         return powExtend(temp, new DenseMatrix(new double[][]{{0.5}}));
     }
     
-    //sums all elements of matrix along dim (1: ->, 2: v
+    //sums all elements of matrix along dim (1: ->, 2: v)
     public static Matrix sum(Matrix a, int dim){
         double[][] retArr = null;
         if(dim == 1){

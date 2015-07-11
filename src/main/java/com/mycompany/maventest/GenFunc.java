@@ -10,6 +10,7 @@ public class GenFunc {
 
     public GenFunc(){}
     
+    //BigDecimal Precision
     private static final int precision = 100;
     
     //Calculate sigmoid of all values in z
@@ -18,10 +19,12 @@ public class GenFunc {
         return MTJExt.divideExtend(MTJExt.single(1), MTJExt.plusExtend(MTJExt.single(1), MTJExt.powExtend(MTJExt.single(Math.E), tempZ.scale(-1))));
     }
     
+    //Calculate derivative of sigmoid for all values in z
     public static Matrix sigmoidGradient(Matrix z){
         return MTJExt.timesExtend(sigmoidEx(z), invSigmoidEx(z));
     }
     
+    //Calculate sigmoid with BigDeciaml, high precision
     public static Matrix sigmoidEx(Matrix z){
         double[][] retArr = new double[z.numRows()][z.numColumns()];
         for(int r = 0; r < z.numRows(); r++){
@@ -33,6 +36,7 @@ public class GenFunc {
         return new DenseMatrix(retArr);
     }
     
+    //Calculate 1-sigmoid with BigDecimal, high precision
     public static Matrix invSigmoidEx(Matrix z){
         double[][] retArr = new double[z.numRows()][z.numColumns()];
         for(int r = 0; r < z.numRows(); r++){
@@ -44,6 +48,7 @@ public class GenFunc {
         return new DenseMatrix(retArr);
     }
     
+    //Reshap vector a into an nr*nc matrix using rows rs to rf of a
     public static Matrix reshape(Matrix a, int rs, int rf, int nr, int nc){
         double[][] retArr = new double[nr][nc];
         int rAt = 0;
@@ -59,6 +64,7 @@ public class GenFunc {
         return new DenseMatrix(retArr);
     }
     
+    //return a vector with all Matricies in a in vector form concatenated to each other
     public static Matrix unroll(Matrix[] a){
         Matrix ret = MTJExt.toVector(a[0]);
         for(int i = 1; i < a.length; i++){
@@ -92,10 +98,12 @@ public class GenFunc {
         return MTJExt.concat(MTJExt.Ones(X1.numRows(), 1), new DenseMatrix(retArr), 1);
     }
     
+    //Normalizes all features in a with the mean values in mu and the standard deviations in sig
     public static Matrix featureNormalize(Matrix a, Matrix mu, Matrix sig){
         return MTJExt.divideExtend(MTJExt.minusExtend(a,mu), sig);
     }
     
+    //cuts a new double array from d from rows rs-rf and columns cs-cf
     public static double[][] splitDouble(double[][] d, int rs, int rf, int cs, int cf){
         if(rf == -1)
             rf = d.length-1;
@@ -114,6 +122,7 @@ public class GenFunc {
         return ret;
     }
     
+    //cuts a new matrix from a from rows rs-rf and columns cs-cf
     public static Matrix splitMatrix(Matrix a, int rs, int rf, int cs, int cf){
         if(rf == -1)
             rf = a.numRows()-1;
@@ -132,6 +141,7 @@ public class GenFunc {
         return new DenseMatrix(ret);
     }
     
+    //returns 2-dim double array of all values in a
     public static double[][] getMatrixArray(Matrix a){
         double[][] ret = new double[a.numRows()][a.numColumns()];
         for(int r = 0; r < ret.length; r++){
@@ -142,6 +152,7 @@ public class GenFunc {
         return ret;
     }
     
+    //returns string representation of d to highest prescision
     public static String doubleToString(double[][] d){
         String ret = "";
         for(int r = 0; r < d.length; r++){
@@ -153,10 +164,12 @@ public class GenFunc {
         return ret;
     }
     
+    //returns string representation of matrix, unformated
     public static String matrixToString(Matrix a){
         return doubleToString(getMatrixArray(a));
     }
 
+    //maps x in range in_min-in_max to range out_min-out_max
     public static double map(double x, double in_min, double in_max, double out_min, double out_max){
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }

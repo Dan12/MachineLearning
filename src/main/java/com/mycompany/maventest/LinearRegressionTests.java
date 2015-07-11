@@ -44,17 +44,20 @@ public class LinearRegressionTests {
         polyValidationCurve(X, y, Xval, yval, 8);
     }
     
+    //return m*1 x mapped to degrees 1-p, x,x^2,x^3,...
     private Matrix polyFeatures(Matrix x, int p){
         Matrix ret = GenFunc.splitMatrix(x, 0, -1, 0, 0).mult(MTJExt.Ones(1, p), new DenseMatrix(x.numRows(),p));
         return MTJExt.powExtend(ret, MTJExt.Range(1, 1, p));
     }
     
+    //show learning curve for x and xv mapped to polyfeatures to degree d with lambda 1
     public void polyLearningCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, double l, int d){
         Matrix xPoly = biased(featureNoramlize(polyFeatures(x, d)));
         Matrix xvPoly = biased(GenFunc.featureNormalize(polyFeatures(xv, d), mu, sigma));
         learningCurve(xPoly, y, xvPoly, yv, l);
     }
     
+    //show learning curve with x as train and xv as validation with lambda l
     public void learningCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, double l){
         Matrix trainError = new DenseMatrix(x.numRows(),1);
         Matrix validationError = new DenseMatrix(x.numRows(),1);
@@ -74,15 +77,16 @@ public class LinearRegressionTests {
         g2d.showGraph();
     }
     
+    //show validation curve for x and xv mapped to polyfeatures to degree d
     public void polyValidationCurve(Matrix x, Matrix y, Matrix xv, Matrix yv, int d){
         Matrix xPoly = biased(featureNoramlize(polyFeatures(x, d)));
         Matrix xvPoly = biased(GenFunc.featureNormalize(polyFeatures(xv, d), mu, sigma));
         validationCurve(xPoly, y, xvPoly, yv);
     }
     
+    //show validation curve with x as train and xv as validation
     public void validationCurve(Matrix x, Matrix y, Matrix xv, Matrix yv){
         Matrix lambdaTests = new DenseMatrix(new double[][]{{0}, {0.001}, {0.003}, {0.01}, {0.03}, {0.1}, {0.3}, {1}, {3}, {10}});
-        //double[] lambdaTests = new double[]{0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10};
         Matrix trainError = new DenseMatrix(lambdaTests.numRows(),1);
         Matrix validationError = new DenseMatrix(lambdaTests.numRows(),1);
         for(int i = 0; i < lambdaTests.numRows(); i++){
@@ -101,6 +105,7 @@ public class LinearRegressionTests {
         g2d.showGraph();
     }
     
+    //visualize x mapped to polyfeatures to degree d against y for lambda l
     public void visualizePolyData(Matrix x, Matrix y, int d, double l){
         final int deg = d;
         Graph2D g2d = new Graph2D();
@@ -136,10 +141,12 @@ public class LinearRegressionTests {
         return GenFunc.featureNormalize(x, mu, sigma);
     }
     
+    //return x biased
     public Matrix biased(Matrix x){
         return MTJExt.concat(MTJExt.Ones(x.numRows(),1), x, 1);
     }
     
+    //set cost gradient for x and y at lambda l
     private void setCostGradient(Matrix x, Matrix y, double l){
         cg = new CostGradient(x, y, l){
             

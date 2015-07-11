@@ -25,7 +25,9 @@ public class GraphTests {
             Thread.sleep(4000);
         } catch (InterruptedException ex) {}
         g2d.addPlot(graphTest,2, java.awt.Color.GREEN);
-        g2d.removePlot(0);
+        g2d.setXExtremes(new double[]{3,8});
+        g2d.setYExtremes(new double[]{0,15});
+        //g2d.removePlot(0);
         g2d.update();
     }
 

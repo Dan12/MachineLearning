@@ -2,13 +2,137 @@ package com.mycompany.maventest;
 
 import java.io.IOException;
 import no.uib.cipr.matrix.DenseMatrix;
+import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Matrix;
 
-public class MTJTests {
+public class MatrixTests {
     
     private static double test = 15.0;
 
-    public MTJTests(){}
+    public MatrixTests(){}
+    
+    public static void MTJTests(){
+        Matrix origA = new DenseMatrix(new double[][]{{2,3},{5,4},{6,10}}); //3*2
+        Matrix origB = new DenseMatrix(new double[][]{{1,13},{11,6},{20,17}});  //3*2
+        Matrix origC = new DenseMatrix(new double[][]{{1},{2}});    //2*1
+        Matrix origD = new DenseMatrix(new double[][]{{1},{2},{3}});    //3*1
+        Matrix matA = new DenseMatrix(origA, true); Matrix matB = new DenseMatrix(origB, true); Matrix matC = new DenseMatrix(origC, true); Matrix matD = new DenseMatrix(origD, true);
+        //returns matA*matC, stores value in matD matD affected
+        System.out.println("Test 1");
+        System.out.println(matA.mult(matC, matD));
+        System.out.println(matA+"\n"+matC); matD = new DenseMatrix(origD, true);
+        //Adds matB to matA, returns result, matA affected
+        System.out.println("Test 2");
+        System.out.println(matA.add(matB));
+        System.out.println(matA+"\n"+matB); matA = new DenseMatrix(origA, true);
+        //adds 5*matB to matA, matA affected
+        System.out.println("Test 3");
+        System.out.println(matA.add(5, matB));
+        System.out.println(matA+"\n"+matB); matA = new DenseMatrix(origA, true);
+        //gets double value of matA at index 0,2, unnafected
+        System.out.println("Test 4");
+        System.out.println(matA.get(0, 1));
+        //returns matA*(5*matC), stores value in matD, matD afected
+        System.out.println("Test 5");
+        System.out.println(matA.mult(5, matC, matD));
+        System.out.println(matA+"\n"+matC); matD = new DenseMatrix(origD, true);
+        //returns (matA*matC)+matD, stores result in matD, matD affected
+        System.out.println("Test 6");
+        System.out.println(matA.multAdd(matC, matD));
+        System.out.println(matA+"\n"+matC+"\n"+matD); matD = new DenseMatrix(origD, true);
+        //returns norm of matA (sqrt(sum(matA.^2))), unaffected
+        System.out.println("Test 7");
+        System.out.println(matA.norm(Matrix.Norm.Frobenius));
+        System.out.println(matA);
+        //returns matA*5, matA affected
+        System.out.println("Test 8");
+        System.out.println(matA.scale(5));
+        System.out.println(matA); matA = new DenseMatrix(origA, true);
+        //returns matB, sets matA to deep copy of matB
+        System.out.println("Test 9");
+        System.out.println(matA.set(matB));
+        System.out.println(matA+"\n"+matB); matA = new DenseMatrix(origA, true);
+        //returns x where a*x = b, in this case the inverse as b is identity matrix
+        System.out.println("Test 10");
+        System.out.println(new DenseMatrix(new double[][]{{5,1},{6,7}}).solve(Matrices.identity(2), new DenseMatrix(2,2)));
+        //returns matA'*matB, both unaffected
+        System.out.println("Test 11");
+        System.out.println(matA.transAmult(matB, new DenseMatrix(2,2)));
+        System.out.println(matA+"\n"+matB);
+        //returns matA'*(2*matB), both unaffected
+        System.out.println("Test 12");
+        System.out.println(matA.transAmult(2, matB, new DenseMatrix(2,2)));
+        System.out.println(matA+"\n"+matB);
+        //returns matA*matB', both unaffected
+        System.out.println("Test 13");
+        System.out.println(matA.transBmult(matB, new DenseMatrix(3,3)));
+        System.out.println(matA+"\n"+matB);
+        //returns matA*(matB*2)', both unaffected
+        System.out.println("Test 14");
+        System.out.println(matA.transBmult(2, matB, new DenseMatrix(3,3)));
+        System.out.println(matA+"\n"+matB);
+        //returns (matA'*matB)+matE, stores value in matE, matE affected
+        System.out.println("Test 15");
+        Matrix matE = new DenseMatrix(new double[][]{{1,2},{3,4}});
+        System.out.println(matA.transAmultAdd(matB, matE));
+        System.out.println(matA+"\n"+matB+"\n"+matE);
+        //returns matC'*matA', both unaffected
+        System.out.println("Test 16");
+        System.out.println(matC.transABmult(matA, new DenseMatrix(1,3)));
+        System.out.println(matC+"\n"+matA);
+        //returns matC'*(2*matA'), both unaffected
+        System.out.println("Test 17");
+        System.out.println(matC.transABmult(2, matA, new DenseMatrix(1,3)));
+        System.out.println(matC+"\n"+matA);
+        //returns (matC'*matA')+matE, value stored in matE, matE affected
+        System.out.println("Test 18");
+        matE = new DenseMatrix(new double[][]{{1,2,3}});
+        System.out.println(matC.transABmultAdd(matA, matE));
+        System.out.println(matC+"\n"+matA+"\n"+matE);
+        //returns matA*zeros, sets matA to result, matA affected
+        System.out.println("Test 19");
+        System.out.println(matA.zero());
+        System.out.println(matA); matA = new DenseMatrix(origA, true);
+        //returns matA', matA unaffected
+        System.out.println("Test 20");
+        System.out.println(matA.transpose(new DenseMatrix(matA.numColumns(), matA.numRows())));
+        System.out.println(matA);
+        //adds 20 to matA at position 0,0
+        System.out.println("Test 21");
+        matA.add(0, 0, 20);
+        System.out.println(matA); matA.set(origA);
+        //sets matA position 0,0 to 51
+        System.out.println("Test 22");
+        matA.set(0, 0, 51);
+        System.out.println(matA); matA = new DenseMatrix(origA, true);
+        //returns x where a'*x = b, inverse of transpose
+        System.out.println("Test 23");
+        System.out.println(new DenseMatrix(new double[][]{{1,2},{3,4}}).transSolve(Matrices.identity(2), new DenseMatrix(2,2)));
+    }
+    
+    public static void GenFuncTests(){
+        
+    }
+    
+    public static void MTJExtTests(){
+        
+    }
+    
+    public static void linearRegressionTests(){
+    
+    }
+    
+    public static void logisticRegressionTests(){
+    
+    }
+    
+    public static void neuralNetwordTests(){
+    
+    }
+    
+    public static void miscTests(){
+    
+    }
     
     public static void runTests(){
         System.out.println( "Hello World!" );

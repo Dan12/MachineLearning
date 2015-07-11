@@ -1,6 +1,7 @@
 package com.mycompany.maventest;
 
 import java.io.IOException;
+import java.util.Arrays;
 import no.uib.cipr.matrix.DenseMatrix;
 import no.uib.cipr.matrix.Matrices;
 import no.uib.cipr.matrix.Matrix;
@@ -111,11 +112,146 @@ public class MatrixTests {
     }
     
     public static void GenFuncTests(){
-        
+        Matrix origA = new DenseMatrix(new double[][]{{2,3},{5,4},{6,10}}); //3*2
+        Matrix origB = new DenseMatrix(new double[][]{{1},{2},{3}});    //3*1
+        Matrix matA = new DenseMatrix(origA, true); Matrix matB = new DenseMatrix(origB, true);
+        //Passed
+        //returns new matrix split (row start index, row finish, column start, column finish), -1 means everything
+        System.out.println("Test 1");
+        System.out.println(GenFunc.splitMatrix(matA, 0, -1, 0, 0));
+        System.out.println(GenFunc.splitMatrix(matB, 1, 2, 0, -1));
+        //Passed
+        //returns two dimensional double array with same values as the matrix
+        System.out.println("Test 2");
+        System.out.println(Arrays.deepToString(GenFunc.getMatrixArray(matA)));
+        //Passed
+        //Maps 6 which is in range 0-10, to range 0-1
+        System.out.println("Test 3");
+        System.out.println(GenFunc.map(6, 0, 10, 0, 1));
+        //Passed
+        //returns a string containing all values of array to highest prescision in proper format to write to a file
+        System.out.println("Test 4");
+        System.out.println(GenFunc.matrixToString(matA));
+        //Passed
+        //Maps two x*1 matricies to degree 4, see actual function for more info
+        System.out.println("Test 5");
+        System.out.println(GenFunc.mapFeature(matB, matB, 4));
+        //Passed
+        //returns vector with matA(:) concatenated to matB(:)
+        System.out.println("Test 6");
+        System.out.println(GenFunc.unroll(new Matrix[]{matA, matB}));
+        //Passed
+        //returns new matrix with 2 rows and 1 column reshaped from rows 0-1 of matB(vector)
+        System.out.println("Test 7");
+        System.out.println(GenFunc.reshape(matB, 0, 1, 2, 1));
+        //Passed
+        //returns sigmoid of all values of matA
+        System.out.println("Test 8");
+        System.out.println(GenFunc.sigmoid(matA));
+        //Passed
+        //returns sigmoid of all values of matA, uses BigDecimal for high precision(100)
+        System.out.println("Test 9");
+        System.out.println(GenFunc.sigmoidEx(matA));
+        //Passed
+        //returns 1-sigmoid of all values of matA, uses BigDecimal for high precision(100)
+        System.out.println("Test 10");
+        System.out.println(GenFunc.invSigmoidEx(matA));
+        //Passed
+        //returns the value of the derivative of sigmoid function at all values in matA
+        System.out.println("Test 11");
+        System.out.println(GenFunc.sigmoidGradient(matA));
     }
     
     public static void MTJExtTests(){
-        
+        Matrix origA = new DenseMatrix(new double[][]{{2,3},{5,4},{6,10}}); //3*2
+        Matrix origB = new DenseMatrix(new double[][]{{1},{2},{3}});    //3*1
+        Matrix origC = new DenseMatrix(new double[][]{{1},{2}});    //2*1
+        Matrix matA = new DenseMatrix(origA, true); Matrix matB = new DenseMatrix(origB, true); Matrix matC = new DenseMatrix(origC, true);
+        //Passd
+        //returns 2*3 matrix of all 5's
+        System.out.println("Test 1");
+        System.out.println(MTJExt.Const(2, 3, 5));
+        //Passed
+        //returns 1*5 matrix of ones
+        System.out.println("Test 2");
+        System.out.println(MTJExt.Ones(1, 5));
+        //Passed
+        //returns 1*x matrix with values from 3-10 at interval 2
+        System.out.println("Test 3");
+        System.out.println(MTJExt.Range(3, 2, 10));
+        //Passed
+        //returns 2*1 matrix of zeros
+        System.out.println("Test 4");
+        System.out.println(MTJExt.Zeros(2, 1));
+        //Passed
+        //returns matrix with matB concatenated to matA along dim
+        System.out.println("Test 5");
+        System.out.println(MTJExt.concat(matA, matB, 1));
+        System.out.println(MTJExt.concat(matB, matC, 2));
+        //Passed
+        //Special elementwise division of matA by matB, matA./matB, ret(0,:) = matA(0,:)./matB(0,:), ret(1,:) = matA(1,:)./matB(0,:)
+        System.out.println("Test 6");
+        System.out.println(MTJExt.divideExtend(matA, matB));
+        //Passed
+        //Checks equality, 0-false, 1-true, matC==[1;1]
+        System.out.println("Test 7");
+        System.out.println(MTJExt.equalsExtend(matC, MTJExt.Ones(2, 1)));
+        //Passed
+        //returns the ln of all values of matA
+        System.out.println("Test 8");
+        System.out.println(MTJExt.logExtend(matA));
+        //Passed 
+        //returns the max of matA along dim and index of max values
+        System.out.println("Test 9");
+        System.out.println(MTJExt.max(matA, 1));
+        System.out.println(MTJExt.max(matA, 2));
+        //Passed
+        //returns the mean of matA along dim
+        System.out.println("Test 10");
+        System.out.println(MTJExt.mean(matA, 1));
+        System.out.println(MTJExt.mean(matA, 2));
+        //Passed
+        //Elementwise subtraction, matA.-matB
+        System.out.println("Test 11");
+        System.out.println(MTJExt.minusExtend(matA, matB));
+        //Passed
+        //Elementwise modulo, matA.%matB
+        System.out.println("Test 12");
+        System.out.println(MTJExt.moduloExtend(matA, matB));
+        //Passed
+        //Elementwise addition matA.+matB
+        System.out.println("Test 13");
+        System.out.println(MTJExt.plusExtend(matA, matB));
+        //Passed
+        //Elementwise Math.pow(matA, matB)
+        System.out.println("Test 14");
+        System.out.println(MTJExt.powExtend(matA, matB));
+        //Passed
+        //Round every number >=0.5, round up, else round down
+        System.out.println("Test 15");
+        System.out.println(MTJExt.roundExtend(new DenseMatrix(new double[][]{{2.435, 2.5632, 4.5},{1.1111, 1.0, 6.99}})));
+        //Passed
+        //returns 1*1 matrix with value set to 3
+        System.out.println("Test 16");
+        System.out.println(MTJExt.single(3));
+        //Passed
+        //returns the standard deviation of matA along dim
+        System.out.println("Test 17");
+        System.out.println(MTJExt.std(matA, 1));
+        System.out.println(MTJExt.std(matA, 2));
+        //Passed
+        //returns the sum of matA along dim
+        System.out.println("Test 18");
+        System.out.println(MTJExt.sum(matA, 1));
+        System.out.println(MTJExt.sum(matA, 2));
+        //Passed
+        //Elementwise multiplication, matA.*matB
+        System.out.println("Test 19");
+        System.out.println(MTJExt.timesExtend(matA, matB));
+        //Passed
+        //returns matA as a vector, matA(:)
+        System.out.println("Test 20");
+        System.out.println(MTJExt.toVector(matA));
     }
     
     public static void linearRegressionTests(){

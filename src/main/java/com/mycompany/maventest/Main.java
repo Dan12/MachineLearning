@@ -7,8 +7,10 @@ public class Main {
     public static void main( String[] args ){
         //NumberRecognition nr = new NumberRecognition();
         //nr.startApplication();
-        MatrixTests.MTJTests();
         //GraphTests.runTests();
+        //MatrixTests.MTJTests();
+        //MatrixTests.GenFuncTests();
+        MatrixTests.MTJExtTests();
     }
 
 }

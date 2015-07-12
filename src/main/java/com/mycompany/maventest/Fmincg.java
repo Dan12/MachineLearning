@@ -88,7 +88,7 @@ public class Fmincg {
         boolean ls_failed = false;  //no previous line search has failed
         double f1 = getCost(init);  Matrix df1 = getGradient(init); //get function value and gradient
         Matrix s = new DenseMatrix(df1,true).scale(-1); //search direction is steepest
-        double d1 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);   //this is the slope
+        double d1 = s.transAmult(s, new DenseMatrix(1,1)).scale(-1).get(0, 0);
         double z1 = red/(1-d1); //initial step is red/(|s|+1)
         
         while(i < length){  //while not finished
@@ -97,7 +97,7 @@ public class Fmincg {
             Matrix X0 = new DenseMatrix(init,true); double f0 = f1; Matrix df0 = new DenseMatrix(df1);  //make a copy of current values
             init.add(new DenseMatrix(s,true).scale(z1));    //begin line search
             double f2 = getCost(init);  Matrix df2 = getGradient(init);
-            double d2 = ((df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows()))).mult(s, new DenseMatrix(1,1))).get(0,0);
+            double d2 = df2.transAmult(s, new DenseMatrix(1,1)).get(0,0);
             double f3 = f1; double d3 = d1; double z3 = -z1;    //initialize point 3 equal to point 1
             double M = MAX;
             boolean success = false; double limit = -1; //initialize quanteties
@@ -119,9 +119,8 @@ public class Fmincg {
                     init.add(new DenseMatrix(s,true).scale(z2));
                     f2 = getCost(init); df2 = getGradient(init);
                     M--;
-                    d2 = ((df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows()))).mult(s, new DenseMatrix(1,1))).get(0,0);
+                    d2 = df2.transAmult(s, new DenseMatrix(1,1)).get(0, 0);
                     z3 = z3-z2; //z3 is now relative to the location of z2
-                    //break;  //TODO: get rid of break
                 }
                 if (f2 > f1+z1*RHO*d1 || d2 > -SIG*d1)
                     break;  //this is a failure
@@ -152,8 +151,7 @@ public class Fmincg {
                 z1 = z1 + z2; init.add(new DenseMatrix(s,true).scale(z2)); //update current estimates
                 f2 = getCost(init); df2 = getGradient(init);
                 M--;
-                d2 = ((df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows()))).mult(s, new DenseMatrix(1,1))).get(0,0);
-                //break;  //TODO: get rid of break
+                d2 = df2.transAmult(s, new DenseMatrix(1,1)).get(0,0);
             }   //end of line search
             
             if(success){    //if line search succeeded
@@ -163,14 +161,14 @@ public class Fmincg {
                 else
                     ret.setfX(MTJExt.concat(ret.getfX(), MTJExt.single(f1), 2));
                 System.out.println("Iteration: "+i+" | Cost: "+f1);
-                double part1 = (MTJExt.minusExtend(df2.transpose(new DenseMatrix(df2.numColumns(), df2.numRows())).mult(df2, new DenseMatrix(1,1)), df1.transpose(new DenseMatrix(df1.numColumns(),df1.numRows())).mult(df2, new DenseMatrix(1,1)))).get(0,0);
-                double part2 = (df1.transpose(new DenseMatrix(df1.numColumns(), df1.numRows())).mult(df1, new DenseMatrix(1,1))).get(0,0);
+                double part1 = (MTJExt.minusExtend(df2.transAmult(df2, new DenseMatrix(1,1)), df1.transAmult(df2, new DenseMatrix(1,1)))).get(0,0);
+                double part2 = (df1.transAmult(df1, new DenseMatrix(1,1))).get(0,0);
                 s = MTJExt.minusExtend(new DenseMatrix(s,true).scale(part1/part2), df2);    //Polack-Ribiere direction
                 Matrix tmp = df1; df1 = df2; df2 = tmp;    //swap derivatives
-                d2 = (df1.transpose(new DenseMatrix(df1.numColumns(),df1.numRows())).mult(s, new DenseMatrix(1,1))).get(0,0);
+                d2 = df1.transAmult(s, new DenseMatrix(1,1)).get(0,0);
                 if(d2 > 0){ //new slope must be negative
                     s = new DenseMatrix(df1,true).scale(-1);    //otherwise use steepest direction
-                    d2 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);
+                    d2 = s.transAmult(s, new DenseMatrix(1,1)).scale(-1).get(0,0);
                 }
                 z1 = z1 * Math.min(RATIO, d1/(d2-0)); //slope ratio but max RATIO, 0 supposed to be realmin(2.2251e-308 for double precision and 1.1755e-38 for single precision)
                 d1 = d2;
@@ -182,11 +180,10 @@ public class Fmincg {
                   break;    //or we ran out of time, so we give up
                 Matrix tmp = df1; df1 = df2; df2 = tmp;    //swap derivatives
                 s = new DenseMatrix(df1, true).scale(-1);   //try steepest
-                d1 = (((s.transpose(new DenseMatrix(s.numColumns(), s.numRows()))).scale(-1)).mult(s, new DenseMatrix(1,1))).get(0,0);
+                d1 = s.transAmult(s, new DenseMatrix(1,1)).scale(-1).get(0, 0);
                 z1 = 1/(1-d1);                     
                 ls_failed = true;   //this line search failed
             }
-            //break;  //TODO: get rid of break
         }
         ret.setI(i);
         ret.setX(init);

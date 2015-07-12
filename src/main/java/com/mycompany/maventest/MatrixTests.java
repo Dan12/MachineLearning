@@ -413,7 +413,7 @@ public class MatrixTests {
             {2}
         });
         //Passed
-        nn = new NeuralNetwork(xData, yData, 2, 2, new int[]{4,3}, 0.2);
+        nn = new NeuralNetwork(xData, yData, 2, 2, new int[]{4,3}, 0.1);
         //Passed
         System.out.println(nn.getTheta(0));
         System.out.println(nn.getTheta(1));

@@ -69,11 +69,12 @@ public class NeuralNetwork {
                     allTheta[i] = GenFunc.reshape(Theta, sumRows, sumRows+NeuralNetwork.this.Theta[i].numRows()*NeuralNetwork.this.Theta[i].numColumns()-1, NeuralNetwork.this.Theta[i].numRows(), NeuralNetwork.this.Theta[i].numColumns());
                     sumRows+=NeuralNetwork.this.Theta[i].numRows()*NeuralNetwork.this.Theta[i].numColumns();
                 }
-                zs[0] = X.mult(allTheta[0].transpose(new DenseMatrix(allTheta[0].numColumns(), allTheta[0].numRows())), new DenseMatrix(X.numRows(), allTheta[0].numRows()));
+                zs[0] = X.transBmult(allTheta[0], new DenseMatrix(X.numRows(),allTheta[0].numRows()));
                 activations[0] = MTJExt.concat(MTJExt.Ones(m, 1), GenFunc.sigmoid(zs[0]), 1);
                 zs[0] = MTJExt.concat(MTJExt.Ones(m, 1), zs[0], 1);
                 for(int i = 1; i < allTheta.length; i++){
-                    zs[i] = activations[i-1].mult(allTheta[i].transpose(new DenseMatrix(allTheta[i].numColumns(), allTheta[i].numRows())), new DenseMatrix(activations[i-1].numRows(), allTheta[i].numRows()));
+                    zs[i] = activations[i-1].transBmult(allTheta[i], new DenseMatrix(activations[i-1].numRows(), allTheta[i].numRows()));
+                    //zs[i] = activations[i-1].mult(allTheta[i].transpose(new DenseMatrix(allTheta[i].numColumns(), allTheta[i].numRows())), new DenseMatrix(activations[i-1].numRows(), allTheta[i].numRows()));
                     activations[i] = GenFunc.sigmoid(zs[i]);
                     if(i < allTheta.length-1){
                         activations[i] = MTJExt.concat(MTJExt.Ones(activations[i].numRows(), 1), activations[i], 1);
@@ -102,7 +103,7 @@ public class NeuralNetwork {
 //                    System.out.println("MS Time: "+(System.nanoTime()-st)/(double)1000000);
 //                    st = System.nanoTime();
                     for(int d = delta.length-2; d >= 0; d--){
-                        delta[d] = GenFunc.splitMatrix(MTJExt.timesExtend((allTheta[d+1].transpose(new DenseMatrix(allTheta[d+1].numColumns(), allTheta[d+1].numRows()))).mult(delta[d+1], new DenseMatrix(allTheta[d+1].numColumns(), delta[d+1].numColumns())), GenFunc.sigmoidGradient(GenFunc.splitMatrix(zs[d], i, i, 0, -1)).transpose(new DenseMatrix(zs[d].numColumns(),1))), 1, -1, 0, -1);
+                        delta[d] = GenFunc.splitMatrix(MTJExt.timesExtend(allTheta[d+1].transAmult(delta[d+1], new DenseMatrix(allTheta[d+1].numColumns(), delta[d+1].numColumns())), GenFunc.sigmoidGradient(GenFunc.splitMatrix(zs[d], i, i, 0, -1)).transpose(new DenseMatrix(zs[d].numColumns(),1))), 1, -1, 0, -1);   
                     }
 //                    System.out.println("MS Time: "+(System.nanoTime()-st)/(double)1000000);
 //                    st = System.nanoTime();

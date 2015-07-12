@@ -1,5 +1,7 @@
 package com.mycompany.maventest;
 
+import com.mycompany.NEAT.NEAT;
+
 public class Main {
 
     public Main(){}
@@ -27,7 +29,11 @@ public class Main {
         //MatrixTests.logisticRegressionTests();
         
         //All Passed
-        MatrixTests.neuralNetwordTests();
+        //MatrixTests.neuralNetwordTests();
+        
+        
+        NEAT neat= new NEAT();
+        neat.runTests();
     }
 
 }

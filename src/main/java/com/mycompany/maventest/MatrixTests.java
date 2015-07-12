@@ -412,8 +412,8 @@ public class MatrixTests {
             {2},
             {2}
         });
-        //Passed
-        nn = new NeuralNetwork(xData, yData, 2, 2, new int[]{4,3}, 0.1);
+        //Passed, the more layers, the lower you have to set lambda
+        nn = new NeuralNetwork(xData, yData, 2, 3, new int[]{5,4,3}, 0.001);
         //Passed
         System.out.println(nn.getTheta(0));
         System.out.println(nn.getTheta(1));

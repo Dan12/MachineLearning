@@ -24,7 +24,9 @@ public class Main {
         //MatrixTests.linearRegressionTests();
         
         //All Passed
-        MatrixTests.logisticRegressionTests();
+        //MatrixTests.logisticRegressionTests();
+        
+        MatrixTests.neuralNetwordTests();
     }
 
 }

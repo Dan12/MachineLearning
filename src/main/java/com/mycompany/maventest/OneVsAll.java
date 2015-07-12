@@ -25,6 +25,7 @@ public class OneVsAll {
         this.Theta = MTJExt.Zeros(this.n, num_labels);
     }
     
+    //sets cost gradient for current label, if label = 1 and y(1) = 1, new y = 0,1,0,0,0,0,0,0,0,0
     public void setCostGradient(int labelAt){
         lrCostGrad = new CostGradient(this.X, MTJExt.equalsExtend(this.y, MTJExt.single(labelAt)), this.lambda){
             
@@ -52,6 +53,7 @@ public class OneVsAll {
         Theta = MTJExt.Zeros(num_labels, n);
     }
     
+    //runs fmincg for every label
     public void runRoutine(){
         for(int i = 0; i < num_labels; i++){
             setCostGradient(i);
@@ -63,12 +65,14 @@ public class OneVsAll {
         }
     }
     
+    //load theta from file fname
     public void loadTheta(String fname){
         try {
             Theta = new DenseMatrix(Readfile.getFileArray(fname));
         } catch (IOException e) { System.out.println(e);}
     }
     
+    //predit value of matrix z
     public Matrix predict(Matrix z){
         Matrix temp = MTJExt.max(GenFunc.sigmoid(z.mult(Theta.transpose(new DenseMatrix(n,num_labels)), new DenseMatrix(z.numRows(),num_labels))), 1);
         return GenFunc.splitMatrix(temp, 0, -1, 1, 1);

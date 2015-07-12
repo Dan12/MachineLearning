@@ -68,6 +68,7 @@ public class LogisticRegression {
         return new DenseMatrix(costHist);
     }
     
+    //runs fmincg for iterns iterations, sets theta to result, and returns cost history
     public Matrix runFmincg(int iterns){
         CostGradient lrCostGrad = new CostGradient(X, y, lambda){
             

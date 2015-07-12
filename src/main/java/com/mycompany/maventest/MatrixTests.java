@@ -346,28 +346,92 @@ public class MatrixTests {
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1100, 1100, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
         System.out.println(GenFunc.splitMatrix(tempY, 495, 505, 0, 0));
-        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(nn.getY(), MTJExt.single(1))), 2)));
+        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(tempY, MTJExt.single(1))), 2)));
         //Passed
         System.out.println(nn.getCostGradient().Cost(GenFunc.unroll(nn.getAllTheta())));
         //Passed
-        System.out.println(GenFunc.sigmoidGradient(new DenseMatrix(new double[][]{{1, -0.5, 0, 0.5, 1}})));
-        //Passed
         //nn.getCostGradient().Gradient(GenFunc.unroll(nn.getAllTheta()));
         //Passed, takes about 4 mins for 50 iterations
-        //nn.runRoutine();
+        //nn.runRoutine(50);
         //Passed
         //System.out.println(nn.getAllTheta()[1]);
         //MatFileInt.writeMatrixArr(nn.getAllTheta(), new String[]{"Theta1","Theta2"}, "nnweights.mat");
         //System.out.println(MatFileInt.readFile("nnweights.mat", "Theta2"));
         //Passed
         nn.loadWeights("nnweights.mat");
-        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(nn.getY(), MTJExt.single(1))), 2)));
+        System.out.println("Training Accuracy: "+GenFunc.matrixToString(MTJExt.mean(MTJExt.equalsExtend(nn.predict(tempX), MTJExt.minusExtend(tempY, MTJExt.single(1))), 2)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 100, 100, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 600, 600, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1100, 1100, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 1600, 1600, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2200, 2200, 0, -1)));
         System.out.println(nn.predict(GenFunc.splitMatrix(tempX, 2700, 2700, 0, -1)));
+        
+        //2 hidden layers test
+        Matrix xData = new DenseMatrix(new double[][]{
+            {5,2},
+            {4,1},
+            {6,2},
+            {7,1},
+            {6,1},
+            {6,0},
+            {8,2},
+            {7,2},
+            {6,3},
+            {8,1},
+            {2,5},
+            {1,4},
+            {2,6},
+            {1,7},
+            {1,6},
+            {0,6},
+            {2,8},
+            {2,7},
+            {3,6},
+            {1,8}
+        });
+        Matrix yData = new DenseMatrix(new double[][]{
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {1},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2},
+            {2}
+        });
+        //Passed
+        nn = new NeuralNetwork(xData, yData, 2, 2, new int[]{4,3}, 0.2);
+        //Passed
+        System.out.println(nn.getTheta(0));
+        System.out.println(nn.getTheta(1));
+        System.out.println(nn.getTheta(2));
+        System.out.println(nn.getAllTheta().length);
+        //Passed
+        nn.runRoutine(50);
+        //Passed
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{5,1}})));
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{8,1}})));
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{10,5}})));
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{4,9}})));
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{2,6}})));
+        System.out.println(nn.predict(new DenseMatrix(new double[][]{{1,7}})));
+        //Passed
+        System.out.println(nn.getTheta(0));
+        System.out.println(nn.getTheta(1));
+        System.out.println(nn.getTheta(2));
     }
     
     private static double test = 15.0;

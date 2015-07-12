@@ -30,6 +30,9 @@ public class NeuralNetwork {
         this.hiddenLayers = h;
         this.hiddenSize = hs;
         this.lambda = l;
+        //map y to values (0 or 1)
+        if(this.y.numColumns() == 1)
+            this.y = MTJExt.equalsExtend(this.y.mult(MTJExt.Ones(1, this.numLabels), new DenseMatrix(this.m,this.numLabels)), MTJExt.Ones(this.m, 1).mult(MTJExt.Range(1, 1, numLabels), new DenseMatrix(this.m, this.numLabels)));
         this.Theta = new Matrix[hiddenLayers+1];
         this.allTheta = new Matrix[hiddenLayers+1];
         this.zs = new Matrix[hiddenLayers+1];
@@ -44,6 +47,7 @@ public class NeuralNetwork {
         setCostGradient();
     }
     
+    //Load weigths from file fname, file must contain matirx saved in format Theta1, Theta2,...
     public void loadWeights(String fname){
         for(int i = 0; i < Theta.length; i++){
             //System.out.println(Theta[i].numRows()+","+Theta[i].numColumns());
@@ -53,8 +57,9 @@ public class NeuralNetwork {
         }
     }
     
+    //Set cost gradient to be used
     private void setCostGradient(){
-        lrCostGrad = new CostGradient(this.X, MTJExt.equalsExtend(this.y.mult(MTJExt.Ones(1, this.numLabels), new DenseMatrix(this.m,this.numLabels)), MTJExt.Ones(this.m, 1).mult(MTJExt.Range(1, 1, numLabels), new DenseMatrix(this.m, this.numLabels))), this.lambda){
+        lrCostGrad = new CostGradient(this.X, this.y, this.lambda){
             
             @Override
             public double Cost(Matrix Theta){
@@ -70,8 +75,10 @@ public class NeuralNetwork {
                 for(int i = 1; i < allTheta.length; i++){
                     zs[i] = activations[i-1].mult(allTheta[i].transpose(new DenseMatrix(allTheta[i].numColumns(), allTheta[i].numRows())), new DenseMatrix(activations[i-1].numRows(), allTheta[i].numRows()));
                     activations[i] = GenFunc.sigmoid(zs[i]);
-                    if(i < allTheta.length-1)
+                    if(i < allTheta.length-1){
                         activations[i] = MTJExt.concat(MTJExt.Ones(activations[i].numRows(), 1), activations[i], 1);
+                        zs[i] = MTJExt.concat(MTJExt.Ones(zs[i].numRows(), 1), zs[i], 1);
+                    }
                 }
                 Matrix sumPos = MTJExt.sum(MTJExt.timesExtend(new DenseMatrix(y,true).scale(-1), MTJExt.logExtend(GenFunc.sigmoidEx(zs[zs.length-1]))), 1);
                 Matrix sumNeg = MTJExt.sum(MTJExt.timesExtend(MTJExt.minusExtend(MTJExt.single(1), y), MTJExt.logExtend(GenFunc.invSigmoidEx(zs[zs.length-1]))), 1);
@@ -118,6 +125,7 @@ public class NeuralNetwork {
         };
     }
     
+    //initialize random starting points with variance epsilon
     public void initRandomTheta(){
         double epsilonInit = 0.12;
         Random rand = new Random();
@@ -130,10 +138,11 @@ public class NeuralNetwork {
         }
     }
     
-    public void runRoutine(){
+    //run fmincg routine on the neural network and store result in Theta
+    public void runRoutine(int iterns){
         initRandomTheta();
         Fmincg mincg = new Fmincg(lrCostGrad);
-        Fmincg.FmincgRet temp = mincg.runRoutine(GenFunc.unroll(Theta), 50);
+        Fmincg.FmincgRet temp = mincg.runRoutine(GenFunc.unroll(Theta), iterns);
         Matrix t = temp.getX();
         int sumRows = 0;
         for(int i = 0; i < Theta.length; i++){
@@ -142,6 +151,7 @@ public class NeuralNetwork {
         }
     }
     
+    //Forward propegate input z through the neural network with the current weights
     public Matrix forwardPropagate(Matrix z){
         Matrix input = MTJExt.concat(MTJExt.Ones(z.numRows(), 1), z, 1);
         Matrix tempPrev = MTJExt.concat(MTJExt.Ones(z.numRows(), 1), GenFunc.sigmoid(input.mult((Theta[0]).transpose(new DenseMatrix(Theta[0].numColumns(), Theta[0].numRows())), new DenseMatrix(input.numRows(), Theta[0].numRows()))), 1);
@@ -153,6 +163,7 @@ public class NeuralNetwork {
         return tempPrev;
     }
     
+    //predict the output when z is the input
     public Matrix predict(Matrix z){
         Matrix result = forwardPropagate(z);
         Matrix temp = MTJExt.max(result, 1);

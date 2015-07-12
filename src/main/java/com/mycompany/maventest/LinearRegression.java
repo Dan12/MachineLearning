@@ -46,7 +46,7 @@ public class LinearRegression {
     public double costFunction(){
         Matrix temp = MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)), y);
         //Should be 1*1 matrix
-        Matrix squaredSum = (temp.transpose(new DenseMatrix(1,m))).mult(temp, new DenseMatrix(1,1));
+        Matrix squaredSum = temp.transAmult(temp, new DenseMatrix(1,1));
         return squaredSum.get(0,0)/(2*m);
     }
     
@@ -61,7 +61,7 @@ public class LinearRegression {
     public Matrix gradientDescent(int iterns, double alpha, boolean rec){
         double[][] costHist = new double[iterns][1];
         for(int i = 0; i < iterns; i++){
-            Matrix temp = (X.transpose(new DenseMatrix(n,m))).mult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)),y), new DenseMatrix(n,1));
+            Matrix temp = X.transAmult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)),y), new DenseMatrix(n,1));
             Theta = MTJExt.minusExtend(Theta,temp.scale(alpha/m));
             if(rec)
                 costHist[i][0] = costFunction();
@@ -71,8 +71,7 @@ public class LinearRegression {
     
     //caluclate minumum using the normal equation
     public void normalEquation(){
-        Matrix temp = X.transpose(new DenseMatrix(n,m));
-        Theta = (((temp.mult(X, new DenseMatrix(n,n))).solve(Matrices.identity(n), new DenseMatrix(n,n))).mult(temp, new DenseMatrix(n,m))).mult(y, new DenseMatrix(n,1));
+        Theta = (((X.transAmult(X, new DenseMatrix(n,n))).solve(Matrices.identity(n), new DenseMatrix(n,n))).transBmult(X, new DenseMatrix(n,m))).mult(y, new DenseMatrix(n,1));
     }
     
     //predict output of a using current values of theta

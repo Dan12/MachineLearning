@@ -159,7 +159,7 @@ public class LinearRegressionTests {
             
             @Override
             public Matrix Gradient(Matrix Theta){
-                Matrix ret = X.transpose(new DenseMatrix(n,m)).mult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)), y), new DenseMatrix(n,1));
+                Matrix ret = X.transAmult(MTJExt.minusExtend(X.mult(Theta, new DenseMatrix(m,1)), y), new DenseMatrix(n,1));
                 ret.scale((double)1/m);
                 Matrix thetaMult = MTJExt.concat(MTJExt.single(0),MTJExt.Const(n-1, 1, lambda/m), 2);
                 ret.add(MTJExt.timesExtend(thetaMult, Theta));

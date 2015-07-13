@@ -3,7 +3,7 @@ package com.mycompany.NEAT;
 public class NEAT {
     
     //Population Size
-    public static int initPopulation = 100;
+    public static int populationSize = 100;
     //Probability to add a new node
     public static double mutNode = 0.03;
     //Probability to add a new connection

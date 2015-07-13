@@ -117,6 +117,13 @@ public class Genome {
         return connectionGenes.size();
     }
     
+    public ArrayList<InnovWeight> getInnovWeight(){
+        ArrayList<InnovWeight> ret = new ArrayList<InnovWeight>();
+        for(ConnectionGene cg : connectionGenes)
+            ret.add(new InnovWeight(cg.getInnovation(), cg.getWeight()));
+        return ret;
+    }
+    
     @Override
     public String toString(){
         String ret = "";

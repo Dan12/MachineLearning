@@ -37,17 +37,24 @@ public class NodeGene {
     }
     
     public void removeDependancy(){
-        dependancies++;
+        dependancies--;
     }
     
     public double getValue(){
         return aValue;
     }
     
+    public int getNumber(){
+        return number;
+    }
+    
     public void addInput(double v){
-        zValue+=v;
-        aValue = Functions.Sigmoid(zValue);
+        zValue+=v; 
         depEval++;
+        if(evaluated()){
+            aValue = Functions.Sigmoid(zValue);
+            zValue = 0;
+        }
     }
     
     public void setInput(double a){

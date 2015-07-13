@@ -22,18 +22,6 @@ public class Tests {
         Organism org2 =  new Organism(Population.inputs, Population.outputs);
         System.out.println(org2);
         System.out.println(Functions.compatibilityDistance(org1,org2));
-        
-//        Genome g = new Genome(2,1);
-//        System.out.println(g);
-//        g.mutAddNode();
-//        g.mutAddConnection();
-//        System.out.println("*----*\n");
-//        System.out.println(g);
-//        g.setInputs(new double[]{0,0});
-//        g.feedForward();
-//        System.out.println(Arrays.toString(g.getOutputs()));
-//        System.out.println(Functions.synapsis(g).toString());
-//        System.out.println(g);
     }
 
 }

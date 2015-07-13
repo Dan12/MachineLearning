@@ -1,5 +1,7 @@
 package com.mycompany.NEAT;
 
+import java.util.Random;
+
 public class ConnectionGene implements Comparable<ConnectionGene>{
     
     private int innovationNumber;
@@ -22,6 +24,19 @@ public class ConnectionGene implements Comparable<ConnectionGene>{
             outputNode.addInput(weight*inputNode.getValue());
             if(!inputNode.evaluated())
                 System.out.println("Node "+inputNode+" not evaluated for Node "+outputNode);
+        }
+    }
+    
+    public void mutate(){
+        Random rand = new Random();
+        double checkVal = rand.nextDouble();
+        //Perturb weight
+        if(checkVal < NEAT.mutWeightPer){
+            weight += rand.nextDouble()*2*NEAT.perturbStep-NEAT.perturbStep;
+        }
+        //New random value
+        else{
+            weight = rand.nextDouble()*2*NEAT.epsilon-NEAT.epsilon;
         }
     }
     

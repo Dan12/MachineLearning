@@ -38,6 +38,10 @@ public class Organism {
         genome.mutAddNode();
     }
     
+    public void mutWeights(){
+        genome.mutWeights();
+    }
+    
     public void setInputs(double[] inputs){
         genome.setInputs(inputs);
     }

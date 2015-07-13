@@ -61,6 +61,11 @@ public class Genome {
         return ret;
     }
     
+    public void mutWeights(){
+        for(ConnectionGene cg : connectionGenes)
+            cg.mutate();
+    }
+    
     public void mutAddNode(){
         int index = rand.nextInt(connectionGenes.size());
         connectionGenes.get(index).disable();

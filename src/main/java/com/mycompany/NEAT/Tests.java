@@ -8,21 +8,27 @@ public class Tests {
     
     public static void runRests(){
         Population p = new Population(2, 1);
-        Species s1 = new Species(new Organism(Population.inputs, Population.outputs));
-        Organism org1 = new Organism(Population.inputs, Population.outputs);
-        System.out.println(org1);
-        org1.mutNode();
-        org1.mutConn();
-        System.out.println(org1);
-        org1.setInputs(new double[]{0,0});
-        org1.feedForward();
-        System.out.println(Arrays.toString(org1.getOutputs()));
-        System.out.println(org1.synapsis().toString());
-        System.out.println(org1);
-        System.out.println(Functions.compatibilityDistance(s1, org1));
-        Organism org2 =  new Organism(Population.inputs, Population.outputs);
-        System.out.println(org2);
-        System.out.println(Functions.compatibilityDistance(s1,org2));
+        for(int i = 0; i < 50; i++)
+            p.nextGen();
+        
+//        Species s1 = new Species(new Organism(Population.inputs, Population.outputs));
+//        Organism org1 = new Organism(Population.inputs, Population.outputs);
+//        Organism org3 = new Organism(Population.inputs, Population.outputs);
+//        System.out.println(org1);
+//        org1.mutNode();
+//        org3.setGenome(org1.copyGenome());
+//        org1.mutConn();
+//        System.out.println(org1);
+//        System.out.println(org3);
+//        org1.setInputs(new double[]{0,0});
+//        org1.feedForward();
+//        System.out.println(Arrays.toString(org1.getOutputs()));
+//        System.out.println(org1.synapsis().toString());
+//        System.out.println(org1);
+//        System.out.println(Functions.compatibilityDistance(s1, org1));
+//        Organism org2 =  new Organism(Population.inputs, Population.outputs);
+//        System.out.println(org2);
+//        System.out.println(Functions.compatibilityDistance(s1,org2));
     }
 
 }

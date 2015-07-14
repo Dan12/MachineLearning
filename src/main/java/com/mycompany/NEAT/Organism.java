@@ -1,11 +1,13 @@
 package com.mycompany.NEAT;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Organism implements Comparable<Organism>{
     
     private Genome genome;
     private Species species;
+    private Random rand = new Random();
 
     public Organism(int inputs, int outputs){
         genome = new Genome(inputs,outputs);
@@ -40,7 +42,19 @@ public class Organism implements Comparable<Organism>{
     }
     
     public void nextStep(){
-        genome.nextStep();
+        genome.nextStep(); 
+    }
+    
+    public void mutate(){
+        double prob = rand.nextDouble();
+        if(prob < NEAT.mutWeight)
+            mutWeights();
+        prob = rand.nextDouble();
+        if(prob < NEAT.mutNode)
+            mutNode();
+        prob = rand.nextDouble();
+        if(prob < NEAT.mutConn)
+            mutConn();
     }
     
     public void nextGen(){
@@ -49,14 +63,17 @@ public class Organism implements Comparable<Organism>{
     }
     
     public void mutConn(){
+        //System.out.println("Mut Conn");
         genome.mutAddConnection();
     }
     
     public void mutNode(){
+        //System.out.println("Mut Node");
         genome.mutAddNode();
     }
     
     public void mutWeights(){
+        //System.out.println("Mut Wieghts");
         genome.mutWeights();
     }
     
@@ -70,6 +87,14 @@ public class Organism implements Comparable<Organism>{
     
     public ArrayList<InnovWeight> getInnovWeight(){
         return genome.getInnovWeight();
+    }
+    
+    public void setGenome(Genome g){
+        genome = g;
+    }
+    
+    public Genome copyGenome(){
+        return genome.copyGenome();
     }
     
     @Override

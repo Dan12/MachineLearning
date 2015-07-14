@@ -48,6 +48,10 @@ public class NodeGene {
         return number;
     }
     
+    public Type getType(){
+        return type;
+    }
+    
     public void addInput(double v){
         zValue+=v; 
         depEval++;
@@ -61,6 +65,14 @@ public class NodeGene {
         if(type == Type.INPUT){
             aValue = a;
         }
+    }
+    
+    public NodeGene copyGene(){
+        NodeGene ret = new NodeGene(this.number, this.type, this.aValue);
+        ret.zValue = this.zValue;
+        ret.dependancies = this.dependancies;
+        ret.depEval = this.depEval;
+        return ret;
     }
     
     @Override

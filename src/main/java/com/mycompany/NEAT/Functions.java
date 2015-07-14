@@ -1,14 +1,13 @@
 package com.mycompany.NEAT;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Functions {
 
     public Functions(){}
     
     public static double Sigmoid(double z){
-        return (double)1/(1+Math.exp(-z));
+        return (double)1/(1+Math.exp(-z*NEAT.sigmoidSlope));
     }
     
     public static double compatibilityDistance(Species s1, Organism o2){

@@ -10,13 +10,13 @@ public class ConnectionGene implements Comparable<ConnectionGene>{
     private double weight;
     private boolean enabled;
 
-    public ConnectionGene(NodeGene i, NodeGene o, int inv, double w){
+    public ConnectionGene(NodeGene i, NodeGene o, int inv, double w, boolean e){
         innovationNumber = inv;
         inputNode = i;
         outputNode = o;
         outputNode.addDependancy();
         weight = w;
-        enabled = true;
+        enabled = e;
     }
     
     public void activate(){
@@ -52,6 +52,10 @@ public class ConnectionGene implements Comparable<ConnectionGene>{
         return inputNode;
     }
     
+    public boolean isActive(){
+        return enabled;
+    }
+    
     public int getInnovation(){
         return innovationNumber;
     }
@@ -65,12 +69,17 @@ public class ConnectionGene implements Comparable<ConnectionGene>{
         outputNode.removeDependancy();
     }
     
+    public ConnectionGene copyGene(NodeGene i, NodeGene o){
+        ConnectionGene ret = new ConnectionGene(i, o, this.innovationNumber, this.weight, this.enabled);
+        o.removeDependancy();
+        return ret;
+    }
+    
     @Override
     public String toString(){
         return "----\n"+innovationNumber+"\n"+inputNode+"\n"+outputNode+"\n"+weight+"\n"+enabled+"\n----";
     }
 
-    
     @Override
     public int compareTo(ConnectionGene cg) {
         if(this.innovationNumber > cg.innovationNumber)

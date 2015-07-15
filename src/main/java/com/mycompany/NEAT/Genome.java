@@ -68,6 +68,11 @@ public class Genome {
             nodeGenes.get(i).setInput(inputs[i-1]);
     }
     
+    public void resetNodes(){
+        for(NodeGene ng : nodeGenes)
+            ng.reset();
+    }
+    
     public double[] getOutputs(){
         double[] ret = new double[Population.outputs];
         int retI = 0;

@@ -22,8 +22,9 @@ public class ConnectionGene implements Comparable<ConnectionGene>{
     public void activate(){
         if(enabled){
             outputNode.addInput(weight*inputNode.getValue());
-            if(!inputNode.evaluated())
-                System.out.println("Node "+inputNode+" not evaluated for Node "+outputNode);
+            if(!inputNode.evaluated()){
+                //System.out.println("Node "+inputNode+" not evaluated for Node "+outputNode);
+            }
         }
     }
     

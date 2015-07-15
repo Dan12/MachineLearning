@@ -8,8 +8,12 @@ public class Tests {
     
     public static void runRests(){
         Population p = new Population(2, 1);
-        for(int i = 0; i < 50; i++)
-            p.nextGen();
+        for(int i = 0; i < NEAT.maxGenerations; i++){
+            if(i < NEAT.maxGenerations-1)
+                p.nextGen(false);
+            else
+                p.nextGen(true);
+        }
         
 //        Species s1 = new Species(new Organism(Population.inputs, Population.outputs));
 //        Organism org1 = new Organism(Population.inputs, Population.outputs);

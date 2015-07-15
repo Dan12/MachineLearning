@@ -52,6 +52,13 @@ public class NodeGene {
         return type;
     }
     
+    public void reset(){
+        if(type != Type.INPUT){
+            zValue = 0;
+            aValue = 0;
+        }
+    }
+    
     public void addInput(double v){
         zValue+=v; 
         depEval++;

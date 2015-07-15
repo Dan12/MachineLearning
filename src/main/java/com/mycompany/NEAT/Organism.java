@@ -8,9 +8,15 @@ public class Organism implements Comparable<Organism>{
     private Genome genome;
     private Species species;
     private Random rand = new Random();
+    private double sharedFitness;
+    private double fitness;
+    private boolean regFitness;
 
     public Organism(int inputs, int outputs){
         genome = new Genome(inputs,outputs);
+        sharedFitness = 0;
+        fitness = 0;
+        regFitness = false;
     }
     
     public void setSpecies(Species s){
@@ -18,7 +24,20 @@ public class Organism implements Comparable<Organism>{
     }
     
     public double sharedFitness(){
-        return fitness()/species.getSize();
+        return sharedFitness;
+    }
+    
+    public double getFitness(){
+        return fitness;
+    }
+    
+    public void setFitness(){
+        fitness = fitness();
+        sharedFitness = fitness/species.getSize();
+    }
+    
+    public void resetNodes(){
+        genome.resetNodes();
     }
     
     public double fitness(){
@@ -43,6 +62,8 @@ public class Organism implements Comparable<Organism>{
     
     public void nextStep(){
         genome.nextStep(); 
+        if(!NEAT.keepMemory)
+            resetNodes();
     }
     
     public void mutate(){
@@ -97,6 +118,10 @@ public class Organism implements Comparable<Organism>{
         return genome.copyGenome();
     }
     
+    public void shareFitnessSort(boolean s){
+        regFitness = !s;
+    }
+    
     @Override
     public String toString(){
         return genome.toString();
@@ -104,12 +129,22 @@ public class Organism implements Comparable<Organism>{
 
     @Override
     public int compareTo(Organism o) {
-        if(this.sharedFitness() > o.sharedFitness())
-            return 1;
-        else if(this.sharedFitness() < o.sharedFitness())
-            return -1;
-        else
-            return 0;
+        if(regFitness){
+            if(this.fitness > o.fitness)
+                return 1;
+            else if(this.fitness < o.fitness)
+                return -1;
+            else
+                return 0;
+        }
+        else{
+            if(this.sharedFitness() > o.sharedFitness())
+                return 1;
+            else if(this.sharedFitness() < o.sharedFitness())
+                return -1;
+            else
+                return 0;
+        }
     }
 
 }

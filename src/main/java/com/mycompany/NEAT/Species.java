@@ -25,14 +25,12 @@ public class Species {
         return false;
     }
     
-    public ArrayList<Organism> nextGen(){
-        selectRepresentative();
-        crossOver();
-        for(Organism org : organisms)
-            org.nextGen();
-        ArrayList<Organism> ret = (ArrayList<Organism>) organisms.clone();
-        organisms.clear();
-        return ret;
+    public double averageFitness(){
+        double ret = 0;
+        for (Organism org : organisms) {
+            ret += org.sharedFitness();
+        }
+        return ret/organisms.size();
     }
     
     public int getSize(){
@@ -48,53 +46,60 @@ public class Species {
         return representative.size();
     }
     
-    private void crossOver(){
-        ArrayList<Organism> newList = new ArrayList<Organism>();
+    public void cullSpecies(){
+        for(Organism org : organisms)
+            org.setFitness();
         organisms.sort(null);
-        System.out.println("Max Fitness: "+organisms.get(organisms.size()-1).fitness()+"\n"+organisms.get(organisms.size()-1).toString());
         int remNum = organisms.size()/2;
-        int size = organisms.size();
         for(int i = 0; i < remNum; i++)
             organisms.remove(0);
-        if(size >= 5){
-            newList.add(organisms.get(organisms.size()-1));
-            size--;
-        }
-        for(int i = 0; i < size; i++){
-            Organism temp = new Organism(1, 1){
-                
-                @Override
-                public double fitness(){
-                    double ret = 0.0;
-                    setInputs(new double[]{0,0});
-                    double result = getOutputs()[0];
-                    ret+= (1-result)*(1-result);
-                    setInputs(new double[]{1,1});
-                    result = getOutputs()[0];
-                    ret+= (1-result)*(1-result);
-                    setInputs(new double[]{1,0});
-                    result = getOutputs()[0];
-                    ret+= (result)*(result);
-                    setInputs(new double[]{0,1});
-                    result = getOutputs()[0];
-                    ret+= (result)*(result);
-                    return ret;
-                }
-            };
-            Organism org1 = organisms.get(rand.nextInt(organisms.size()));
-            if(rand.nextDouble() < NEAT.offspringCross){
-                Organism org2 = organisms.get(rand.nextInt(organisms.size()));
-                temp.setGenome(org1.copyGenome().crossover(org2.copyGenome(), org1.fitness(), org2.fitness()));
+    }
+    
+    public void setFitness(){
+        for(Organism org : organisms)
+            org.setFitness();
+    }
+    
+    public Organism crossOver(){
+        Organism temp = new Organism(1, 1){
+
+            @Override
+            public double fitness(){
+                double ret = 0.0;
+                setInputs(new double[]{0,0});
+                feedForward();
+                double result = getOutputs()[0];
+                ret+= (1-result)*(1-result);
+                setInputs(new double[]{1,1});
+                nextStep();
+                feedForward();
+                result = getOutputs()[0];
+                ret+= (1-result)*(1-result);
+                setInputs(new double[]{1,0});
+                nextStep();
+                feedForward();
+                result = getOutputs()[0];
+                ret+= (result)*(result);
+                setInputs(new double[]{0,1});
+                nextStep();
+                feedForward();
+                result = getOutputs()[0];
+                ret+= (result)*(result);
+                nextStep();
+                return ret;
             }
-            else{
-                temp.setGenome(org1.copyGenome());
-            }
-            //System.out.println(temp);
-            temp.mutate();
-            newList.add(temp);
+        };
+        Organism org1 = organisms.get(rand.nextInt(organisms.size()));
+        if(rand.nextDouble() < NEAT.offspringCross){
+            Organism org2 = organisms.get(rand.nextInt(organisms.size()));
+            temp.setGenome(org1.copyGenome().crossover(org2.copyGenome(), org1.fitness(), org2.fitness()));
         }
-        organisms = newList;
-        //System.out.println("----End Crossover----");
+        else{
+            temp.setGenome(org1.copyGenome());
+        }
+        //System.out.println(temp);
+        temp.mutate();
+        return temp;
     }
     
     public ArrayList<InnovWeight> synapsis(){
